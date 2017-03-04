@@ -21,7 +21,7 @@ namespace Soduko
             foreach (var item in gameBoard2)
             {
                 counter++;
-                Console.Write(item);
+                Console.Write(item +" "+ item.GameBoardRegion.ToString()+ item.Coordinates +" "+"     ");
                 if (counter == 9)
                 {
                     Console.WriteLine();

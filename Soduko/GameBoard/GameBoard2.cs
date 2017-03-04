@@ -10,15 +10,20 @@ namespace Soduko.GameBoard
     {
         private readonly Collection<GameBoardTag> _boardTags;
         private readonly int _gameBoardRoot;
+       
 
         public int Count => _boardTags.Count;
         public int GameBoardRoot => _gameBoardRoot;
         public int GameBoardSize => _gameBoardRoot * _gameBoardRoot;
+
         public GameBoard2(int gameBoardRoot)
         {
+            
             _gameBoardRoot = gameBoardRoot;
             _boardTags = new Collection<GameBoardTag>();
         }
+
+       
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

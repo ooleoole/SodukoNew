@@ -37,9 +37,14 @@ namespace Soduko.GameHandlers
 
                     coordinateCounter = 0;
                 }
+
+
+
                 if (!_gameBoard.Any(t => (t.Coordinates.X == x && t.Value == randomNumber) ||
                                         (t.Coordinates.Y == y && t.Value == randomNumber) ||
-                                        t.Coordinates.X == x && t.Coordinates.Y == y))
+                                        t.Coordinates.X == x && t.Coordinates.Y == y ||
+                                        t.GameBoardRegion == new GameBoardTag(new Coordinates(x, y)).GameBoardRegion
+                                        && t.Value == randomNumber))
                 {
 
                     return new GameBoardTag(new Coordinates(x, y), randomNumber);
@@ -51,11 +56,14 @@ namespace Soduko.GameHandlers
 
         public int ClearBoard(int loopCounter)
         {
-            if (loopCounter == 100) Console.Write(".");
-            if (loopCounter == 10000000 * 2)
+            if (loopCounter == 100) Console.Write(loopCounter);
+            if (loopCounter == 100)
             {
-
-                Console.WriteLine(_gameBoard.Count);
+                if (_gameBoard.Count>89)
+                {
+                    Console.WriteLine(_gameBoard.Count);
+                }
+               
                 _gameBoard.Clear();
                 return 0;
             }
@@ -70,24 +78,16 @@ namespace Soduko.GameHandlers
         {
             int x = 1;
             int y = 1;
-
+            var random = new Random(9);
             do
             {
-
-                var tag = GetRandomValue(x, y);
+                var randomX = random.Next(1, 10);
+                var randomY = random.Next(1, 10);
+                var tag = GetRandomValue(randomX, randomY);
                 _gameBoard.Add(tag);
 
-                x++;
-                if (x == GameBoardRoot + 1)
-                {
-                    x = 1;
-                    y++;
-                    if (y == GameBoardRoot + 1)
-                    {
-                        y = 1;
-                    }
-                }
-            } while (_gameBoard.Count < 80);
+                
+            } while (_gameBoard.Count < 60);
         }
 
         public void GenerateBlankGame()
