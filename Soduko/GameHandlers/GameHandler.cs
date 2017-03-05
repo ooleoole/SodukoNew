@@ -21,34 +21,59 @@ namespace Soduko.GameHandlers
         private GameBoardTag GetRandomValue(int x, int y)
         {
 
-            Random random = new Random();
-            var coordinateCounter = 0;
+            Random random = new Random(Guid.NewGuid().GetHashCode());
+            var coordinatesSeed = GetCoordinatsSeed();
+
             var loopCounter = 0;
             do
             {
-                var randomNumber = random.Next(1, GameBoardRoot + 1);
-                coordinateCounter++;
+
+
                 loopCounter++;
                 loopCounter = ClearBoard(loopCounter);
-                if (coordinateCounter == 9)
-                {
-                    y = x == 9 && y < 9 ? y + 1 : y;
-                    x = x < 9 ? x + 1 : x;
 
-                    coordinateCounter = 0;
-                }
+                var valueSeed = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-
-
-                if (!_gameBoard.Any(t => (t.Coordinates.X == x && t.Value == randomNumber) ||
-                                        (t.Coordinates.Y == y && t.Value == randomNumber) ||
-                                        t.Coordinates.X == x && t.Coordinates.Y == y ||
-                                        t.GameBoardRegion == new GameBoardTag(new Coordinates(x, y)).GameBoardRegion
-                                        && t.Value == randomNumber))
+                if (_gameBoard.All(t => t.Coordinates != new Coordinates(x, y)))
                 {
 
-                    return new GameBoardTag(new Coordinates(x, y), randomNumber);
+                    do
+                    {
+                        var randomIndex = random.Next(0, valueSeed.Length);
+                        var value = valueSeed[randomIndex];
+                        valueSeed = valueSeed.Except(new[] { value }).ToArray();
+
+                        if (!_gameBoard.Any(t => (t.Coordinates.X == x && t.Value == value) ||
+                                            (t.Coordinates.Y == y && t.Value == value) ||
+                                            t.GameBoardRegion == new GameBoardTag(new Coordinates(x, y)).GameBoardRegion
+                                            && t.Value == value))
+                        {
+                            
+                            return new GameBoardTag(new Coordinates(x, y), value);
+                        }
+                    } while (valueSeed.Length != 0);
+
+                    var coordinate = new Coordinates(x, y);
+                    
+                    coordinatesSeed = coordinatesSeed.Except(new[] { coordinate }).ToArray();
+                    var index = random.Next(0, coordinatesSeed.Length);
+                    coordinate = coordinatesSeed[index];
+                    x = coordinate.X;
+                    y = coordinate.Y;
                 }
+
+                else
+                {
+
+                    var coordinate = new Coordinates(x, y);
+                    
+                    coordinatesSeed = coordinatesSeed.Except(new[] { coordinate }).ToArray();
+                    var index = random.Next(0, coordinatesSeed.Length);
+                    coordinate = coordinatesSeed[index];
+                    x = coordinate.X;
+                    y = coordinate.Y;
+                }
+
 
             } while (true);
 
@@ -56,14 +81,14 @@ namespace Soduko.GameHandlers
 
         public int ClearBoard(int loopCounter)
         {
-            if (loopCounter == 100) Console.Write(loopCounter);
-            if (loopCounter == 100)
+            if (loopCounter == 1000) Console.Write(".");
+            if (loopCounter == 10)
             {
-                if (_gameBoard.Count>89)
+                if (_gameBoard.Count > 65)
                 {
                     Console.WriteLine(_gameBoard.Count);
                 }
-               
+
                 _gameBoard.Clear();
                 return 0;
             }
@@ -78,7 +103,7 @@ namespace Soduko.GameHandlers
         {
             int x = 1;
             int y = 1;
-            var random = new Random(9);
+            var random = new Random(Guid.NewGuid().GetHashCode());
             do
             {
                 var randomX = random.Next(1, 10);
@@ -86,18 +111,18 @@ namespace Soduko.GameHandlers
                 var tag = GetRandomValue(randomX, randomY);
                 _gameBoard.Add(tag);
 
-                
-            } while (_gameBoard.Count < 60);
+
+            } while (_gameBoard.Count < 80);
         }
 
-        public void GenerateBlankGame()
+        public Coordinates[] GetCoordinatsSeed()
         {
             int x = 1;
             int y = 1;
-
+            var coordinats = new Coordinates[81];
             for (int i = 0; i < _gameBoard.GameBoardSize; i++)
             {
-                _gameBoard.Add(new GameBoardTag(new Coordinates(x, y)));
+                coordinats[i] = new Coordinates(x, y);
                 x++;
                 if (x == _gameBoard.GameBoardRoot + 1)
                 {
@@ -110,6 +135,7 @@ namespace Soduko.GameHandlers
                 }
 
             }
+            return coordinats;
         }
 
 

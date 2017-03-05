@@ -15,13 +15,13 @@ namespace Soduko
 
             GameBoard2 gameBoard2 = new GameBoard2(9);
             var game = new GameHandler(gameBoard2, 3);
-
+            var test = game.GetCoordinatsSeed();
             game.GenerateGame();
             int counter = 0;
             foreach (var item in gameBoard2)
             {
                 counter++;
-                Console.Write(item +" "+ item.GameBoardRegion.ToString()+ item.Coordinates +" "+"     ");
+                Console.Write(item + " " + item.GameBoardRegion.ToString() + item.Coordinates + " " + "     ");
                 if (counter == 9)
                 {
                     Console.WriteLine();
