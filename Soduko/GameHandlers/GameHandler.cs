@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,15 +49,28 @@ namespace Soduko.GameHandlers
                                             t.GameBoardRegion == new GameBoardTag(new Coordinates(x, y)).GameBoardRegion
                                             && t.Value == value))
                         {
-                            
+
                             return new GameBoardTag(new Coordinates(x, y), value);
                         }
                     } while (valueSeed.Length != 0);
 
                     var coordinate = new Coordinates(x, y);
-                    
+
                     coordinatesSeed = coordinatesSeed.Except(new[] { coordinate }).ToArray();
                     var index = random.Next(0, coordinatesSeed.Length);
+                    if (coordinatesSeed.Length == 0)
+                    {
+                        coordinatesSeed = GetCoordinatsSeed();
+                        for (int i = 0; i < 10; i++)
+                        {
+                            var removeSeed = random.Next(0, coordinatesSeed.Length);
+                            var removeCood = coordinatesSeed[removeSeed];
+                            
+                            coordinatesSeed = coordinatesSeed.Except(new[] { removeCood }).ToArray();
+                        }
+                        Console.WriteLine(_gameBoard.Count);
+                    }
+
                     coordinate = coordinatesSeed[index];
                     x = coordinate.X;
                     y = coordinate.Y;
@@ -66,8 +80,20 @@ namespace Soduko.GameHandlers
                 {
 
                     var coordinate = new Coordinates(x, y);
-                    
+
                     coordinatesSeed = coordinatesSeed.Except(new[] { coordinate }).ToArray();
+                    if (coordinatesSeed.Length == 0)
+                    {
+                        coordinatesSeed = GetCoordinatsSeed();
+                        for (int i = 0; i < 10; i++)
+                        {
+                            var removeSeed = random.Next(0, coordinatesSeed.Length);
+                            var removeCood = coordinatesSeed[removeSeed];
+                            coordinatesSeed = coordinatesSeed.Except(new[] { removeCood }).ToArray();
+                        }
+                        Console.WriteLine(_gameBoard.Count);
+
+                    }
                     var index = random.Next(0, coordinatesSeed.Length);
                     coordinate = coordinatesSeed[index];
                     x = coordinate.X;
@@ -82,14 +108,14 @@ namespace Soduko.GameHandlers
         public int ClearBoard(int loopCounter)
         {
             if (loopCounter == 1000) Console.Write(".");
-            if (loopCounter == 10)
+            if (loopCounter == 10000000)
             {
-                if (_gameBoard.Count > 65)
+                if (_gameBoard.Count > 70)
                 {
                     Console.WriteLine(_gameBoard.Count);
                 }
 
-                _gameBoard.Clear();
+                //_gameBoard.Clear();
                 return 0;
             }
 
