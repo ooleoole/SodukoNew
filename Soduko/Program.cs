@@ -15,15 +15,16 @@ namespace Soduko
             int y = 0;
 
             GameBoard2 gameBoard2 = new GameBoard2(9);
-           var test2= gameBoard2.OrderBy(r => r.Coordinates.Y).ThenBy(v=> v.Value);
+            var test2 = gameBoard2.OrderByDescending(r => r.Coordinates.Y).ThenBy(c=> c.Coordinates.X);
             var game = new GameHandler(gameBoard2, 3);
-            var test = game.GetCoordinatsSeed();
+            
             game.GenerateGame();
             int counter = 0;
+            Console.Clear();
             foreach (var item in test2)
             {
                 counter++;
-                Console.Write(item + " " + item.GameBoardRegion.ToString() + item.Coordinates + " " + "     ");
+                Console.Write(item+" ");
                 if (counter == 9)
                 {
                     Console.WriteLine();

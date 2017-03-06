@@ -19,10 +19,8 @@ namespace Soduko.GameHandlers
             _difficultyLevel = difficultylevel;
         }
 
-        private GameBoardTag GetRandomValue(int x, int y)
+        private GameBoardTag GetRandomValue(Coordinates coordinates)
         {
-
-
             var coordinatesSeed = GetCoordinatsSeed();
 
             var loopCounter = 0;
@@ -31,11 +29,11 @@ namespace Soduko.GameHandlers
                 Random random = new Random(Guid.NewGuid().GetHashCode());
 
                 loopCounter++;
-                loopCounter = ClearBoard(loopCounter);
+              
 
                 var valueSeed = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-                if (_gameBoard.All(t => t.Coordinates != new Coordinates(x, y)))
+                if (_gameBoard.All(t => t.Coordinates != coordinates))
                 {
 
                     do
@@ -44,63 +42,44 @@ namespace Soduko.GameHandlers
                         var value = valueSeed[randomIndex];
                         valueSeed = valueSeed.Except(new[] { value }).ToArray();
 
-                        if (!_gameBoard.Any(t => (t.Coordinates.X == x && t.Value == value) ||
-                                            (t.Coordinates.Y == y && t.Value == value) ||
-                                            t.GameBoardRegion == new GameBoardTag(new Coordinates(x, y)).GameBoardRegion
+                        if (!_gameBoard.Any(t => (t.Coordinates.X == coordinates.X && t.Value == value) ||
+                                           (t.Coordinates.Y == coordinates.Y && t.Value == value) ||
+                                            t.GameBoardRegion == new GameBoardTag(coordinates).GameBoardRegion
                                             && t.Value == value))
                         {
 
-                            return new GameBoardTag(new Coordinates(x, y), value);
+                            return new GameBoardTag(coordinates, value);
                         }
                     } while (valueSeed.Length != 0);
 
-                    var coordinate = new Coordinates(x, y);
 
-                    coordinatesSeed = coordinatesSeed.Except(new[] { coordinate }).ToArray();
+                    coordinatesSeed = coordinatesSeed.Except(new[] { coordinates }).ToArray();
 
                    
                     if (coordinatesSeed.Length == 0)
                     {
-                        coordinatesSeed = GetCoordinatsSeed();
-                        for (int i = 0; i < 10; i++)
-                        {
-                            var coordX = random.Next(1, _gameBoard.GameBoardRoot + 1);
-                            var coordY = random.Next(1, _gameBoard.GameBoardRoot + 1);
-
-                            _gameBoard.RemoveAt(new Coordinates(coordX, coordY));
-                        }
-                        Console.WriteLine(_gameBoard.Count);
+                        coordinatesSeed = BackTrackCoordinatesSeed(coordinatesSeed, random);
+                        Console.Write(".");
                     }
                     var index = random.Next(0, coordinatesSeed.Length);
-                    coordinate = coordinatesSeed[index];
-                    x = coordinate.X;
-                    y = coordinate.Y;
+                    coordinates = coordinatesSeed[index];
+                    
                 }
 
                 else
                 {
 
-                    var coordinate = new Coordinates(x, y);
+                   
 
-                    coordinatesSeed = coordinatesSeed.Except(new[] { coordinate }).ToArray();
+                    coordinatesSeed = coordinatesSeed.Except(new[] { coordinates }).ToArray();
                     if (coordinatesSeed.Length == 0)
                     {
-                        coordinatesSeed = GetCoordinatsSeed();
-                        for (int i = 0; i < 10; i++)
-                        {
-                            var coordX = random.Next(1, _gameBoard.GameBoardRoot + 1);
-                            var coordY = random.Next(1, _gameBoard.GameBoardRoot + 1);
-
-                            _gameBoard.RemoveAt(new Coordinates(coordX, coordY));
-
-
-                        }
-                        Console.WriteLine(_gameBoard.Count);
+                        coordinatesSeed = BackTrackCoordinatesSeed(coordinatesSeed, random);
+                        Console.Write(".");
                     }
                     var index = random.Next(0, coordinatesSeed.Length);
-                    coordinate = coordinatesSeed[index];
-                    x = coordinate.X;
-                    y = coordinate.Y;
+                    coordinates = coordinatesSeed[index];
+                   
                 }
 
 
@@ -108,23 +87,17 @@ namespace Soduko.GameHandlers
 
         }
 
-        public int ClearBoard(int loopCounter)
+        private Coordinates[] BackTrackCoordinatesSeed(Coordinates[] coordinatesSeed, Random random)
         {
-            if (loopCounter == 1000) Console.Write(".");
-            if (loopCounter == 10000000)
+            coordinatesSeed = GetCoordinatsSeed();
+            for (int i = 0; i < 2; i++)
             {
-                if (_gameBoard.Count > 70)
-                {
-                    Console.WriteLine(_gameBoard.Count);
-                }
+                var coordX = random.Next(1, _gameBoard.GameBoardRoot + 1);
+                var coordY = random.Next(1, _gameBoard.GameBoardRoot + 1);
 
-                //_gameBoard.Clear();
-                return 0;
+                _gameBoard.RemoveAt(new Coordinates(coordX, coordY));
             }
-
-            return loopCounter;
-
-
+            return coordinatesSeed;
         }
 
 
@@ -137,14 +110,14 @@ namespace Soduko.GameHandlers
             {
                 var randomX = random.Next(1, 10);
                 var randomY = random.Next(1, 10);
-                var tag = GetRandomValue(randomX, randomY);
+                var tag = GetRandomValue(new Coordinates(randomX,randomY));
                 _gameBoard.Add(tag);
 
 
             } while (_gameBoard.Count < 81);
         }
 
-        public Coordinates[] GetCoordinatsSeed()
+        private Coordinates[] GetCoordinatsSeed()
         {
             int x = 1;
             int y = 1;
