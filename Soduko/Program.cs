@@ -15,7 +15,7 @@ namespace Soduko
             int y = 0;
 
             GameBoard2 gameBoard2 = new GameBoard2(9);
-           var test2= gameBoard2.OrderBy(r => r.Coordinates.X).ThenBy(v=> v.Value);
+           var test2= gameBoard2.OrderBy(r => r.Coordinates.Y).ThenBy(v=> v.Value);
             var game = new GameHandler(gameBoard2, 3);
             var test = game.GetCoordinatsSeed();
             game.GenerateGame();
@@ -36,7 +36,7 @@ namespace Soduko
 
     public class SudokoBoard
     {
-        int[,] array2D = new int[,] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
+        int[,] array2D = { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
 
         public void Print()
         {

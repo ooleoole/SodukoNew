@@ -68,8 +68,6 @@ namespace Soduko.GameHandlers
                             var coordY = random.Next(1, _gameBoard.GameBoardRoot + 1);
 
                             _gameBoard.RemoveAt(new Coordinates(coordX, coordY));
-
-
                         }
                         Console.WriteLine(_gameBoard.Count);
                     }
