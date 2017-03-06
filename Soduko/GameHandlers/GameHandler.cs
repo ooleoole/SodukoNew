@@ -12,130 +12,140 @@ namespace Soduko.GameHandlers
     {
         private GameBoard2 _gameBoard;
         private int _difficultyLevel;
+        private Coordinates[] _coordinatesSeed;
+        private readonly Random _random;
         private int GameBoardRoot => _gameBoard.GameBoardRoot;
         public GameHandler(GameBoard2 gameBoard, int difficultylevel)
         {
             _gameBoard = gameBoard;
             _difficultyLevel = difficultylevel;
+            _random = new Random(Guid.NewGuid().GetHashCode());
         }
 
-        private GameBoardTag GetRandomValue(Coordinates coordinates)
+        private GameBoardTag GetGameTag()
         {
-            var coordinatesSeed = GetCoordinatsSeed();
+            var randomX = _random.Next(1, 10);
+            var randomY = _random.Next(1, 10);
+            var coordinates = new Coordinates(randomX, randomY);
+            _coordinatesSeed = GetCoordinatsSeed();
 
-            var loopCounter = 0;
             do
             {
-                Random random = new Random(Guid.NewGuid().GetHashCode());
-
-                loopCounter++;
-              
-
                 var valueSeed = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
                 if (_gameBoard.All(t => t.Coordinates != coordinates))
                 {
-
                     do
                     {
-                        var randomIndex = random.Next(0, valueSeed.Length);
-                        var value = valueSeed[randomIndex];
-                        valueSeed = valueSeed.Except(new[] { value }).ToArray();
+                        var value = GetRandomValueFromSeed(valueSeed);
+                        valueSeed = RemoveValueFromSeed(valueSeed, value);
 
-                        if (!_gameBoard.Any(t => (t.Coordinates.X == coordinates.X && t.Value == value) ||
-                                           (t.Coordinates.Y == coordinates.Y && t.Value == value) ||
-                                            t.GameBoardRegion == new GameBoardTag(coordinates).GameBoardRegion
-                                            && t.Value == value))
-                        {
-
+                        if (ValidateGameBoardTag(value, coordinates))
                             return new GameBoardTag(coordinates, value);
-                        }
+
                     } while (valueSeed.Length != 0);
 
-
-                    coordinatesSeed = coordinatesSeed.Except(new[] { coordinates }).ToArray();
-
-                   
-                    if (coordinatesSeed.Length == 0)
-                    {
-                        coordinatesSeed = BackTrackCoordinatesSeed(coordinatesSeed, random);
-                        Console.Write(".");
-                    }
-                    var index = random.Next(0, coordinatesSeed.Length);
-                    coordinates = coordinatesSeed[index];
-                    
+                    RemoveCoordinatesFromSeed(coordinates);
+                    BackTrackIfCoordinatesSeedIsEmpty();
+                    coordinates = GetRandomCoordinatesFromSeed();
                 }
 
                 else
                 {
-
-                   
-
-                    coordinatesSeed = coordinatesSeed.Except(new[] { coordinates }).ToArray();
-                    if (coordinatesSeed.Length == 0)
-                    {
-                        coordinatesSeed = BackTrackCoordinatesSeed(coordinatesSeed, random);
-                        Console.Write(".");
-                    }
-                    var index = random.Next(0, coordinatesSeed.Length);
-                    coordinates = coordinatesSeed[index];
-                   
+                    RemoveCoordinatesFromSeed(coordinates);
+                    BackTrackIfCoordinatesSeedIsEmpty();
+                    coordinates = GetRandomCoordinatesFromSeed();
                 }
 
-
             } while (true);
+        }
+
+        private bool ValidateGameBoardTag(int value, Coordinates coordinates)
+        {
+            return !_gameBoard.Any(t => (t.Coordinates.X == coordinates.X && t.Value == value) ||
+                                        (t.Coordinates.Y == coordinates.Y && t.Value == value) ||
+                                        t.GameBoardRegion == new GameBoardTag(coordinates).GameBoardRegion
+                                        && t.Value == value);
+        }
+        private void BackTrackIfCoordinatesSeedIsEmpty()
+        {
+            if (_coordinatesSeed.Length == 0)
+            {
+                _coordinatesSeed = BackTrackCoordinatesSeed();
+                Console.Write(".");
+            }
+        }
+
+        private static int[] RemoveValueFromSeed(int[] valueSeed, int value)
+        {
+            valueSeed = valueSeed.Except(new[] { value }).ToArray();
+            return valueSeed;
+        }
+
+        private int GetRandomValueFromSeed(int[] valueSeed)
+        {
+            var randomIndex = _random.Next(0, valueSeed.Length);
+            var value = valueSeed[randomIndex];
+            return value;
+        }
+
+        private void RemoveCoordinatesFromSeed(Coordinates coordinates)
+        {
+            _coordinatesSeed = _coordinatesSeed.Except(new[] { coordinates }).ToArray();
 
         }
 
-        private Coordinates[] BackTrackCoordinatesSeed(Coordinates[] coordinatesSeed, Random random)
+        private Coordinates GetRandomCoordinatesFromSeed()
         {
-            coordinatesSeed = GetCoordinatsSeed();
-            for (int i = 0; i < 2; i++)
-            {
-                var coordX = random.Next(1, _gameBoard.GameBoardRoot + 1);
-                var coordY = random.Next(1, _gameBoard.GameBoardRoot + 1);
+            var index = _random.Next(0, _coordinatesSeed.Length);
+            var coordinates = _coordinatesSeed[index];
+            return coordinates;
+        }
 
-                _gameBoard.RemoveAt(new Coordinates(coordX, coordY));
-            }
+        private Coordinates[] BackTrackCoordinatesSeed()
+        {
+            var coordinatesSeed = GetCoordinatsSeed();
+            var coordinates = GetRandomCoordinates();
+            _gameBoard.RemoveAt(coordinates);
             return coordinatesSeed;
         }
 
+        private Coordinates GetRandomCoordinates()
+        {
+            var coordX = _random.Next(1, _gameBoard.GameBoardRoot + 1);
+            var coordY = _random.Next(1, _gameBoard.GameBoardRoot + 1);
+            return new Coordinates(coordX, coordY);
+        }
 
         public void GenerateGame()
         {
-            int x = 1;
-            int y = 1;
-            var random = new Random(Guid.NewGuid().GetHashCode());
             do
             {
-                var randomX = random.Next(1, 10);
-                var randomY = random.Next(1, 10);
-                var tag = GetRandomValue(new Coordinates(randomX,randomY));
+                var tag = GetGameTag();
                 _gameBoard.Add(tag);
 
-
-            } while (_gameBoard.Count < 81);
+            } while (_gameBoard.Count < GameBoardRoot * GameBoardRoot);
         }
 
         private Coordinates[] GetCoordinatsSeed()
         {
-            int x = 1;
-            int y = 1;
+            var x = 0;
+            var y = 1;
             var coordinats = new Coordinates[81];
             for (int i = 0; i < _gameBoard.GameBoardSize; i++)
             {
-                coordinats[i] = new Coordinates(x, y);
                 x++;
-                if (x == _gameBoard.GameBoardRoot + 1)
-                {
-                    x = 1;
-                    y++;
-                    if (y == _gameBoard.GameBoardRoot + 1)
-                    {
-                        y = 1;
-                    }
-                }
+                coordinats[i] = new Coordinates(x, y);
 
+                if (x == _gameBoard.GameBoardRoot)
+                {
+                    x = 0;
+
+                    if (y == _gameBoard.GameBoardRoot)
+                    {
+                        y = 0;
+                    }
+                    y++;
+                }
             }
             return coordinats;
         }
