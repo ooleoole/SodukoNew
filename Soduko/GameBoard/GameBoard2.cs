@@ -54,7 +54,7 @@ namespace Soduko.GameBoard
         public bool RemoveAt(Coordinates coordinates)
         {
             ValidateCoordinates(coordinates);
-            var tag = _boardTags.FirstOrDefault(t => t.Coordinates == coordinates && t.Value != null);
+            var tag = _boardTags.FirstOrDefault(t => t.Coordinates == coordinates);
             if (tag == null) return false;
 
             _boardTags.Remove(tag);

@@ -22,13 +22,13 @@ namespace Soduko.GameHandlers
         private GameBoardTag GetRandomValue(int x, int y)
         {
 
-            Random random = new Random(Guid.NewGuid().GetHashCode());
+
             var coordinatesSeed = GetCoordinatsSeed();
 
             var loopCounter = 0;
             do
             {
-
+                Random random = new Random(Guid.NewGuid().GetHashCode());
 
                 loopCounter++;
                 loopCounter = ClearBoard(loopCounter);
@@ -57,20 +57,23 @@ namespace Soduko.GameHandlers
                     var coordinate = new Coordinates(x, y);
 
                     coordinatesSeed = coordinatesSeed.Except(new[] { coordinate }).ToArray();
-                    var index = random.Next(0, coordinatesSeed.Length);
+
+                   
                     if (coordinatesSeed.Length == 0)
                     {
                         coordinatesSeed = GetCoordinatsSeed();
                         for (int i = 0; i < 10; i++)
                         {
-                            var removeSeed = random.Next(0, coordinatesSeed.Length);
-                            var removeCood = coordinatesSeed[removeSeed];
-                            
-                            coordinatesSeed = coordinatesSeed.Except(new[] { removeCood }).ToArray();
+                            var coordX = random.Next(1, _gameBoard.GameBoardRoot + 1);
+                            var coordY = random.Next(1, _gameBoard.GameBoardRoot + 1);
+
+                            _gameBoard.RemoveAt(new Coordinates(coordX, coordY));
+
+
                         }
                         Console.WriteLine(_gameBoard.Count);
                     }
-
+                    var index = random.Next(0, coordinatesSeed.Length);
                     coordinate = coordinatesSeed[index];
                     x = coordinate.X;
                     y = coordinate.Y;
@@ -87,12 +90,14 @@ namespace Soduko.GameHandlers
                         coordinatesSeed = GetCoordinatsSeed();
                         for (int i = 0; i < 10; i++)
                         {
-                            var removeSeed = random.Next(0, coordinatesSeed.Length);
-                            var removeCood = coordinatesSeed[removeSeed];
-                            coordinatesSeed = coordinatesSeed.Except(new[] { removeCood }).ToArray();
+                            var coordX = random.Next(1, _gameBoard.GameBoardRoot + 1);
+                            var coordY = random.Next(1, _gameBoard.GameBoardRoot + 1);
+
+                            _gameBoard.RemoveAt(new Coordinates(coordX, coordY));
+
+
                         }
                         Console.WriteLine(_gameBoard.Count);
-
                     }
                     var index = random.Next(0, coordinatesSeed.Length);
                     coordinate = coordinatesSeed[index];
@@ -138,7 +143,7 @@ namespace Soduko.GameHandlers
                 _gameBoard.Add(tag);
 
 
-            } while (_gameBoard.Count < 80);
+            } while (_gameBoard.Count < 81);
         }
 
         public Coordinates[] GetCoordinatsSeed()

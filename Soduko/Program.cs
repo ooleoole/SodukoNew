@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Soduko.GameBoard;
 using Soduko.GameHandlers;
 
@@ -14,11 +15,12 @@ namespace Soduko
             int y = 0;
 
             GameBoard2 gameBoard2 = new GameBoard2(9);
+           var test2= gameBoard2.OrderBy(r => r.Coordinates.X).ThenBy(v=> v.Value);
             var game = new GameHandler(gameBoard2, 3);
             var test = game.GetCoordinatsSeed();
             game.GenerateGame();
             int counter = 0;
-            foreach (var item in gameBoard2)
+            foreach (var item in test2)
             {
                 counter++;
                 Console.Write(item + " " + item.GameBoardRegion.ToString() + item.Coordinates + " " + "     ");
