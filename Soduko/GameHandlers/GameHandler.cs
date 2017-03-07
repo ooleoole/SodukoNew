@@ -11,16 +11,19 @@ namespace Soduko.GameHandlers
     public class GameHandler : IGameHandler
     {
         private readonly IGameBoard _gameBoard;
+        private IDictionary<IGameBoard, IGameBoard> _gameBoardKeys;
         private int _difficultyLevel;
         private ICollection<Coordinate> _coordinatesSeed;
         private readonly Random _random;
 
+        public IDictionary<IGameBoard, IGameBoard> GameBoardKeys => _gameBoardKeys;
 
         public GameHandler(IGameBoard gameBoard, int difficultylevel)
         {
             _gameBoard = gameBoard;
             _difficultyLevel = difficultylevel;
             _random = new Random(Guid.NewGuid().GetHashCode());
+            _gameBoardKeys=new Dictionary<IGameBoard, IGameBoard>();
         }
 
         private GameBoardTag GetGameTag()
@@ -146,7 +149,10 @@ namespace Soduko.GameHandlers
                 _gameBoard.Add(tag);
 
             } while (_gameBoard.Count < _gameBoard.GameBoardSize);
+
+            _gameBoardKeys.Values.Add(_gameBoard);
             ClearRandomValuesBasedOnDifficulty();
+            _gameBoardKeys.Keys.Add(_gameBoard);
         }
 
         private IList<Coordinate> GetCoordinatsSeed()
