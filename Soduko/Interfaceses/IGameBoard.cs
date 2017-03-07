@@ -13,5 +13,6 @@ namespace Soduko.GameBoard
         void Replace(GameBoardTag tag);
         bool RemoveAt(Coordinate coordinate);
         bool Remove(GameBoardTag tag);
+        IGameBoard Clone();
     }
 }

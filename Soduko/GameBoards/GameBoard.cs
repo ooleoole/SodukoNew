@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Soduko.GameBoard;
 
-namespace Soduko.GameBoard
+namespace Soduko.GameBoards
 {
     public class GameBoard : IEnumerable<GameBoardTag>, IGameBoard
     {
-        private readonly Collection<GameBoardTag> _boardTags;
+        private ICollection<GameBoardTag> _boardTags;
         private readonly int _gameBoardRoot;
        
 
@@ -39,6 +40,7 @@ namespace Soduko.GameBoard
             CheckIfBoardSlotIsFree(tag);
             ValidateTag(tag);
             _boardTags.Add(tag);
+           _boardTags= _boardTags.OrderByDescending(r => r.Coordinate.Y).ThenBy(c => c.Coordinate.X).ToList();
         }
 
         public void Clear()
@@ -50,6 +52,7 @@ namespace Soduko.GameBoard
             ValidateTag(tag);
             RemoveAt(tag.Coordinate);
             _boardTags.Add(tag);
+            _boardTags = _boardTags.OrderByDescending(r => r.Coordinate.Y).ThenBy(c => c.Coordinate.X).ToList();
         }
         public bool RemoveAt(Coordinate coordinate)
         {
@@ -97,6 +100,15 @@ namespace Soduko.GameBoard
                 throw new ArgumentException("Slot is taken");
         }
 
+        public IGameBoard Clone()
+        {
+            IGameBoard clone= new GameBoard(GameBoardRoot);
+            foreach (var tag in _boardTags)
+            {
+                clone.Add(tag);
+            }
+            return clone;
+        }
         public override string ToString()
         {
             int counter = 0;
@@ -107,7 +119,7 @@ namespace Soduko.GameBoard
                 output += tag + " ";
                 if (counter == 9)
                 {
-                    output += "/n";
+                    output += "\n";
                     counter = 0;
                 }
             }

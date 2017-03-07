@@ -11,19 +11,19 @@ namespace Soduko.GameHandlers
     public class GameHandler : IGameHandler
     {
         private readonly IGameBoard _gameBoard;
-        private IDictionary<IGameBoard, IGameBoard> _gameBoardKeys;
+        private IDictionary<IGameBoard, IGameBoard> _gameBoardGameKeysPair;
         private int _difficultyLevel;
         private ICollection<Coordinate> _coordinatesSeed;
         private readonly Random _random;
 
-        public IDictionary<IGameBoard, IGameBoard> GameBoardKeys => _gameBoardKeys;
+        public IDictionary<IGameBoard, IGameBoard> GameBoardGameKeysPair => _gameBoardGameKeysPair;
 
         public GameHandler(IGameBoard gameBoard, int difficultylevel)
         {
             _gameBoard = gameBoard;
             _difficultyLevel = difficultylevel;
             _random = new Random(Guid.NewGuid().GetHashCode());
-            _gameBoardKeys=new Dictionary<IGameBoard, IGameBoard>();
+            _gameBoardGameKeysPair = new Dictionary<IGameBoard, IGameBoard>();
         }
 
         private GameBoardTag GetGameTag()
@@ -149,11 +149,18 @@ namespace Soduko.GameHandlers
                 _gameBoard.Add(tag);
 
             } while (_gameBoard.Count < _gameBoard.GameBoardSize);
-            var gameboard = _gameBoard;
-            _gameBoardKeys.Add(gameboard,gameboard);
-            //ClearRandomValuesBasedOnDifficulty();
-            //var gameBoardKey = _gameBoard;
-           // _gameBoardKeys.Keys.Add(gameBoardKey);
+
+            AddKeyGamePairToDic();
+            ClearRandomValuesBasedOnDifficulty();
+
+        }
+
+        private void AddKeyGamePairToDic()
+        {
+            var gameBoardKey = _gameBoard.Clone();
+            var gameBoard = _gameBoard;
+            var keyGamePair = new KeyValuePair<IGameBoard, IGameBoard>(gameBoardKey, gameBoard);
+            _gameBoardGameKeysPair.Add(keyGamePair);
         }
 
         private IList<Coordinate> GetCoordinatsSeed()
