@@ -14,8 +14,8 @@ namespace Soduko
             int x = 0;
             int y = 0;
 
-            GameBoard2 gameBoard2 = new GameBoard2(9);
-            var test2 = gameBoard2.OrderByDescending(r => r.Coordinates.Y).ThenBy(c=> c.Coordinates.X);
+            GameBoard.GameBoard gameBoard2 = new GameBoard.GameBoard(9);
+            var test2 = gameBoard2.OrderByDescending(r => r.Coordinate.Y).ThenBy(c=> c.Coordinate.X);
             var game = new GameHandler(gameBoard2, 3);
             
             game.GenerateGame();

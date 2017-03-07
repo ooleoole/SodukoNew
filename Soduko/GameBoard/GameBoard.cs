@@ -1,110 +1,102 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Soduko.GameBoard
 {
-    public class GameBoard : IEnumerable<int?>
+    public class GameBoard : IGameBoard
     {
-        private int?[,] _gameBoard;
-        private bool _isReadOnly;
-        private int _gameBoardRoot;
-        private delegate bool LoopAction(int? item, int x, int y);
-        public int Count => _gameBoard.Length;
-        public bool IsReadOnly => _isReadOnly;
+        private readonly Collection<GameBoardTag> _boardTags;
+        private readonly int _gameBoardRoot;
+       
 
-        
+        public int Count => _boardTags.Count;
+        public int GameBoardRoot => _gameBoardRoot;
+        public int GameBoardSize => _gameBoardRoot * _gameBoardRoot;
+
         public GameBoard(int gameBoardRoot)
         {
+            
             _gameBoardRoot = gameBoardRoot;
-            _gameBoard = new int?[gameBoardRoot, gameBoardRoot];
+            _boardTags = new Collection<GameBoardTag>();
         }
 
-        public void Add(int? item)
+       
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            LoopAction loopAction = Add;
-            if (!GameBoardLooper(item, loopAction))
-            {
-                throw new ArgumentException("GameBoard Is full");
-            }
+            return GetEnumerator();
         }
 
-        private bool Add(int? item, int x, int y)
+        public IEnumerator<GameBoardTag> GetEnumerator()
         {
-
-            if (_gameBoard[x, y] == null)
-            {
-                _gameBoard[x, y] = item;
-                return true;
-            }
-            return false;
+            return _boardTags.GetEnumerator();
+        }
+        public void Add(GameBoardTag tag)
+        {
+            if (tag == null) throw new ArgumentNullException(nameof(tag));
+            CheckIfBoardSlotIsFree(tag);
+            ValidateTag(tag);
+            _boardTags.Add(tag);
         }
 
         public void Clear()
         {
-            _gameBoard = new int?[_gameBoardRoot, _gameBoardRoot];
+            _boardTags.Clear();
+        }
+        public void Replace(GameBoardTag tag)
+        {
+            ValidateTag(tag);
+            RemoveAt(tag.Coordinate);
+            _boardTags.Add(tag);
+        }
+        public bool RemoveAt(Coordinate coordinate)
+        {
+            ValidateCoordinates(coordinate);
+            var tag = _boardTags.FirstOrDefault(t => t.Coordinate == coordinate);
+            if (tag == null) return false;
+
+            _boardTags.Remove(tag);
+            return true;
+        }
+        public bool Remove(GameBoardTag tag)
+        {
+            return _boardTags.Remove(tag);
         }
 
 
-        public bool Contains(int? item)
+        private void ValidateCoordinates(Coordinate coordinate)
         {
-            LoopAction loopAction = Contains;
-            return GameBoardLooper(item, loopAction);
+            if (coordinate.X > _gameBoardRoot || coordinate.Y > _gameBoardRoot ||
+                coordinate.X <= 0 || coordinate.Y <= 0)
+                throw new ArgumentException("Coordinates out of bounds. " +
+                                            $"Max value is: {_gameBoardRoot} " +
+                                            "Min value is 1");
+        }
+        private void ValidateTag(GameBoardTag tag)
+        {
+            ValidateCoordinates(tag.Coordinate);
+            ValidateGameTagValue(tag);
+
         }
 
-        private bool GameBoardLooper(int? item, LoopAction loopAction)
+        private void ValidateGameTagValue(GameBoardTag tag)
         {
-            for (int x = 0; x < _gameBoardRoot; x++)
-            {
-                for (int y = 0; y < _gameBoardRoot; y++)
-                {
-                    if (loopAction(item, x, y))
-                        return true;
-                }
-            }
-            return false;
+            if (tag.Value > _gameBoardRoot)
+                throw new ArgumentException("Invalid value. " +
+                                            "Min value is 1. " +
+                                            $"Max value is {_gameBoardRoot}");
         }
 
-        private bool Contains(int? item, int x, int y)
+        private void CheckIfBoardSlotIsFree(GameBoardTag tag)
         {
-            return _gameBoard[x, y] == item;
-        }
-
-        public void CopyTo(int?[] array, int arrayIndex)
-        {
-            _gameBoard.CopyTo(array, arrayIndex);
+            if (_boardTags.Any(t => t.Coordinate.X == tag.Coordinate.X &&
+                                    t.Coordinate.Y == tag.Coordinate.Y &&
+                                    t.Value != null))
+                throw new ArgumentException("Slot is taken");
         }
 
         
-
-        public bool Remove(int? item)
-        {
-            LoopAction loopAction = Remove;
-            return GameBoardLooper(item, loopAction);
-
-        }
-
-        private bool Remove(int? item, int x, int y)
-        {
-            if (_gameBoard[x, y] == item)
-            {
-                _gameBoard[x, y] = null;
-                return true;
-            }
-            return false;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _gameBoard.GetEnumerator();
-        }
-
-        public IEnumerator<int?> GetEnumerator()
-        {
-            return (IEnumerator<int?>)_gameBoard.GetEnumerator();
-        }
     }
 }

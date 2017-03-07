@@ -8,14 +8,15 @@ using Soduko.GameBoard;
 
 namespace Soduko.GameHandlers
 {
-    public class GameHandler
+    public class GameHandler : IGameHandler
     {
-        private GameBoard2 _gameBoard;
+        private readonly IGameBoard _gameBoard;
         private int _difficultyLevel;
-        private Coordinates[] _coordinatesSeed;
+        private Coordinate[] _coordinatesSeed;
         private readonly Random _random;
-        private int GameBoardRoot => _gameBoard.GameBoardRoot;
-        public GameHandler(GameBoard2 gameBoard, int difficultylevel)
+       
+
+        public GameHandler(GameBoard.GameBoard gameBoard, int difficultylevel)
         {
             _gameBoard = gameBoard;
             _difficultyLevel = difficultylevel;
@@ -26,13 +27,13 @@ namespace Soduko.GameHandlers
         {
             var randomX = _random.Next(1, 10);
             var randomY = _random.Next(1, 10);
-            var coordinates = new Coordinates(randomX, randomY);
+            var coordinates = new Coordinate(randomX, randomY);
             _coordinatesSeed = GetCoordinatsSeed();
 
             do
             {
                 var valueSeed = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-                if (_gameBoard.All(t => t.Coordinates != coordinates))
+                if (_gameBoard.All(t => t.Coordinate != coordinates))
                 {
                     do
                     {
@@ -59,11 +60,11 @@ namespace Soduko.GameHandlers
             } while (true);
         }
 
-        private bool ValidateGameBoardTag(int value, Coordinates coordinates)
+        private bool ValidateGameBoardTag(int value, Coordinate coordinate)
         {
-            return !_gameBoard.Any(t => (t.Coordinates.X == coordinates.X && t.Value == value) ||
-                                        (t.Coordinates.Y == coordinates.Y && t.Value == value) ||
-                                        t.GameBoardRegion == new GameBoardTag(coordinates).GameBoardRegion
+            return !_gameBoard.Any(t => (t.Coordinate.X == coordinate.X && t.Value == value) ||
+                                        (t.Coordinate.Y == coordinate.Y && t.Value == value) ||
+                                        t.GameBoardRegion == new GameBoardTag(coordinate).GameBoardRegion
                                         && t.Value == value);
         }
         private void BackTrackIfCoordinatesSeedIsEmpty()
@@ -88,32 +89,32 @@ namespace Soduko.GameHandlers
             return value;
         }
 
-        private void RemoveCoordinatesFromSeed(Coordinates coordinates)
+        private void RemoveCoordinatesFromSeed(Coordinate coordinate)
         {
-            _coordinatesSeed = _coordinatesSeed.Except(new[] { coordinates }).ToArray();
+            _coordinatesSeed = _coordinatesSeed.Except(new[] { coordinate }).ToArray();
 
         }
 
-        private Coordinates GetRandomCoordinatesFromSeed()
+        private Coordinate GetRandomCoordinatesFromSeed()
         {
             var index = _random.Next(0, _coordinatesSeed.Length);
             var coordinates = _coordinatesSeed[index];
             return coordinates;
         }
 
-        private Coordinates[] BackTrackCoordinatesSeed()
+        private Coordinate[] BackTrackCoordinatesSeed()
         {
             var coordinatesSeed = GetCoordinatsSeed();
-            var coordinates = GetRandomCoordinates();
+            var coordinates = GetRandomCoordinate();
             _gameBoard.RemoveAt(coordinates);
             return coordinatesSeed;
         }
 
-        private Coordinates GetRandomCoordinates()
+        private Coordinate GetRandomCoordinate()
         {
             var coordX = _random.Next(1, _gameBoard.GameBoardRoot + 1);
             var coordY = _random.Next(1, _gameBoard.GameBoardRoot + 1);
-            return new Coordinates(coordX, coordY);
+            return new Coordinate(coordX, coordY);
         }
 
         public void GenerateGame()
@@ -123,18 +124,18 @@ namespace Soduko.GameHandlers
                 var tag = GetGameTag();
                 _gameBoard.Add(tag);
 
-            } while (_gameBoard.Count < GameBoardRoot * GameBoardRoot);
+            } while (_gameBoard.Count < _gameBoard.GameBoardSize);
         }
 
-        private Coordinates[] GetCoordinatsSeed()
+        private Coordinate[] GetCoordinatsSeed()
         {
             var x = 0;
             var y = 1;
-            var coordinats = new Coordinates[81];
+            var coordinates = new Coordinate[81];
             for (int i = 0; i < _gameBoard.GameBoardSize; i++)
             {
                 x++;
-                coordinats[i] = new Coordinates(x, y);
+                coordinates[i] = new Coordinate(x, y);
 
                 if (x == _gameBoard.GameBoardRoot)
                 {
@@ -147,7 +148,7 @@ namespace Soduko.GameHandlers
                     y++;
                 }
             }
-            return coordinats;
+            return coordinates;
         }
 
 
