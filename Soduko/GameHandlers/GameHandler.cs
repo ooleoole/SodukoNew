@@ -12,11 +12,11 @@ namespace Soduko.GameHandlers
     {
         private readonly IGameBoard _gameBoard;
         private int _difficultyLevel;
-        private Coordinate[] _coordinatesSeed;
+        private ICollection<Coordinate> _coordinatesSeed;
         private readonly Random _random;
        
 
-        public GameHandler(GameBoard.GameBoard gameBoard, int difficultylevel)
+        public GameHandler(IGameBoard gameBoard, int difficultylevel)
         {
             _gameBoard = gameBoard;
             _difficultyLevel = difficultylevel;
@@ -69,7 +69,7 @@ namespace Soduko.GameHandlers
         }
         private void BackTrackIfCoordinatesSeedIsEmpty()
         {
-            if (_coordinatesSeed.Length == 0)
+            if (!_coordinatesSeed.Any())
             {
                 _coordinatesSeed = BackTrackCoordinatesSeed();
                 Console.Write(".");
@@ -91,18 +91,18 @@ namespace Soduko.GameHandlers
 
         private void RemoveCoordinatesFromSeed(Coordinate coordinate)
         {
-            _coordinatesSeed = _coordinatesSeed.Except(new[] { coordinate }).ToArray();
+            _coordinatesSeed.Remove(coordinate);
 
         }
 
         private Coordinate GetRandomCoordinatesFromSeed()
         {
-            var index = _random.Next(0, _coordinatesSeed.Length);
-            var coordinates = _coordinatesSeed[index];
+            var index = _random.Next(0, _coordinatesSeed.Count);
+            var coordinates = _coordinatesSeed.ElementAt(index);
             return coordinates;
         }
 
-        private Coordinate[] BackTrackCoordinatesSeed()
+        private IList<Coordinate> BackTrackCoordinatesSeed()
         {
             var coordinatesSeed = GetCoordinatsSeed();
             var coordinates = GetRandomCoordinate();
@@ -127,15 +127,15 @@ namespace Soduko.GameHandlers
             } while (_gameBoard.Count < _gameBoard.GameBoardSize);
         }
 
-        private Coordinate[] GetCoordinatsSeed()
+        private IList<Coordinate> GetCoordinatsSeed()
         {
             var x = 0;
             var y = 1;
-            var coordinates = new Coordinate[81];
+            var coordinates = new List<Coordinate>(_gameBoard.GameBoardSize);
             for (int i = 0; i < _gameBoard.GameBoardSize; i++)
             {
                 x++;
-                coordinates[i] = new Coordinate(x, y);
+                coordinates.Add(new Coordinate(x, y)); 
 
                 if (x == _gameBoard.GameBoardRoot)
                 {

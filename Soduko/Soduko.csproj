@@ -43,12 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameBoard\Coordinate.cs" />
+    <Compile Include="Utilitys\Coordinate.cs" />
     <Compile Include="GameBoard\GameBoardOLD.cs" />
     <Compile Include="GameBoard\GameBoard.cs" />
-    <Compile Include="GameBoard\GameBoardTag.cs" />
-    <Compile Include="GameBoard\IGameBoard.cs" />
-    <Compile Include="GameBoard\IGameBoardTag.cs" />
+    <Compile Include="Utilitys\GameBoardTag.cs" />
+    <Compile Include="Interfaceses\IGameBoard.cs" />
+    <Compile Include="Interfaceses\IGameBoardTag.cs" />
     <Compile Include="GameHandlers\GameHandler.cs" />
     <Compile Include="GameHandlers\IGameHandler.cs" />
     <Compile Include="Program.cs" />
