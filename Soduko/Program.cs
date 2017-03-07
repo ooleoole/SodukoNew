@@ -21,16 +21,7 @@ namespace Soduko
             game.GenerateGame();
             int counter = 0;
             Console.Clear();
-            foreach (var item in test2)
-            {
-                counter++;
-                Console.Write(item+" ");
-                if (counter == 9)
-                {
-                    Console.WriteLine();
-                    counter = 0;
-                }
-            }
+            Console.WriteLine(gameBoard2);
             Console.ReadKey();
         }
     }

@@ -149,10 +149,11 @@ namespace Soduko.GameHandlers
                 _gameBoard.Add(tag);
 
             } while (_gameBoard.Count < _gameBoard.GameBoardSize);
-
-            _gameBoardKeys.Values.Add(_gameBoard);
-            ClearRandomValuesBasedOnDifficulty();
-            _gameBoardKeys.Keys.Add(_gameBoard);
+            var gameboard = _gameBoard;
+            _gameBoardKeys.Add(gameboard,gameboard);
+            //ClearRandomValuesBasedOnDifficulty();
+            //var gameBoardKey = _gameBoard;
+           // _gameBoardKeys.Keys.Add(gameBoardKey);
         }
 
         private IList<Coordinate> GetCoordinatsSeed()

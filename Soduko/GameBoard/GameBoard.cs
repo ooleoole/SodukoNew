@@ -97,6 +97,21 @@ namespace Soduko.GameBoard
                 throw new ArgumentException("Slot is taken");
         }
 
-        
+        public override string ToString()
+        {
+            int counter = 0;
+            string output ="";
+            foreach (var tag in _boardTags)
+            {
+                counter++;
+                output += tag + " ";
+                if (counter == 9)
+                {
+                    output += "/n";
+                    counter = 0;
+                }
+            }
+            return output;
+        }
     }
 }
