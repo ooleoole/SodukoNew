@@ -14,7 +14,7 @@ namespace Soduko.GameHandlers
         private int _difficultyLevel;
         private ICollection<Coordinate> _coordinatesSeed;
         private readonly Random _random;
-       
+
 
         public GameHandler(IGameBoard gameBoard, int difficultylevel)
         {
@@ -60,6 +60,27 @@ namespace Soduko.GameHandlers
             } while (true);
         }
 
+        private void ClearRandomValuesBasedOnDifficulty()
+        {
+            var removeAmount = 25 - _difficultyLevel;
+            var removeSeed = GetCoordinatsSeed();
+            int index;
+            for (int i = 0; i < removeAmount; i++)
+            {
+                index = _random.Next(0, removeSeed.Count);
+                removeSeed.RemoveAt(index);
+            }
+
+            do
+            {
+                index = _random.Next(0, removeSeed.Count);
+                var randomCoordinate = removeSeed.ElementAt(index);
+                removeSeed.Remove(randomCoordinate);
+                var gameTag = new GameBoardTag(randomCoordinate);
+                _gameBoard.Replace(gameTag);
+            } while (removeSeed.Count != 0);
+
+        }
         private bool ValidateGameBoardTag(int value, Coordinate coordinate)
         {
             return !_gameBoard.Any(t => (t.Coordinate.X == coordinate.X && t.Value == value) ||
@@ -125,6 +146,7 @@ namespace Soduko.GameHandlers
                 _gameBoard.Add(tag);
 
             } while (_gameBoard.Count < _gameBoard.GameBoardSize);
+            ClearRandomValuesBasedOnDifficulty();
         }
 
         private IList<Coordinate> GetCoordinatsSeed()
@@ -135,7 +157,7 @@ namespace Soduko.GameHandlers
             for (int i = 0; i < _gameBoard.GameBoardSize; i++)
             {
                 x++;
-                coordinates.Add(new Coordinate(x, y)); 
+                coordinates.Add(new Coordinate(x, y));
 
                 if (x == _gameBoard.GameBoardRoot)
                 {

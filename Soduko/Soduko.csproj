@@ -50,7 +50,7 @@
     <Compile Include="Interfaceses\IGameBoard.cs" />
     <Compile Include="Interfaceses\IGameBoardTag.cs" />
     <Compile Include="GameHandlers\GameHandler.cs" />
-    <Compile Include="GameHandlers\IGameHandler.cs" />
+    <Compile Include="Interfaceses\IGameHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

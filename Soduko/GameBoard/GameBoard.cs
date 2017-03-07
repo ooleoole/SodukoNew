@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Soduko.GameBoard
 {
-    public class GameBoard : IGameBoard
+    public class GameBoard : IEnumerable<GameBoardTag>, IGameBoard
     {
         private readonly Collection<GameBoardTag> _boardTags;
         private readonly int _gameBoardRoot;
