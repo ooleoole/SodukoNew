@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Soduko.GameBoard;
+using Soduko.Utilitys;
 
 namespace Soduko.GameBoards
 {
-    public class GameBoard : IEnumerable<GameBoardTag>, IGameBoard
+    public class GameBoard : IGameBoard
     {
         private ICollection<GameBoardTag> _boardTags;
         private readonly int _gameBoardRoot;
-       
+
 
         public int Count => _boardTags.Count;
         public int GameBoardRoot => _gameBoardRoot;
@@ -19,12 +20,12 @@ namespace Soduko.GameBoards
 
         public GameBoard(int gameBoardRoot)
         {
-            
+
             _gameBoardRoot = gameBoardRoot;
             _boardTags = new Collection<GameBoardTag>();
         }
 
-       
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -40,7 +41,7 @@ namespace Soduko.GameBoards
             CheckIfBoardSlotIsFree(tag);
             ValidateTag(tag);
             _boardTags.Add(tag);
-           _boardTags= _boardTags.OrderByDescending(r => r.Coordinate.Y).ThenBy(c => c.Coordinate.X).ToList();
+            _boardTags = _boardTags.OrderByDescending(r => r.Coordinate.Y).ThenBy(c => c.Coordinate.X).ToList();
         }
 
         public void Clear()
@@ -102,7 +103,7 @@ namespace Soduko.GameBoards
 
         public IGameBoard Clone()
         {
-            IGameBoard clone= new GameBoard(GameBoardRoot);
+            IGameBoard clone = new GameBoard(GameBoardRoot);
             foreach (var tag in _boardTags)
             {
                 clone.Add(tag);
@@ -112,11 +113,12 @@ namespace Soduko.GameBoards
         public override string ToString()
         {
             int counter = 0;
-            string output ="";
+            string output = "";
             foreach (var tag in _boardTags)
             {
                 counter++;
                 output += tag + " ";
+
                 if (counter == 9)
                 {
                     output += "\n";

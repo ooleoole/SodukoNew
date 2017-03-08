@@ -1,3 +1,5 @@
+using Soduko.Utilitys;
+
 namespace Soduko.GameBoard
 {
     public interface IGameBoardTag

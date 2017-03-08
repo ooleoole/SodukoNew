@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Soduko.GameBoard;
 
-namespace Soduko.GameBoard
+namespace Soduko.Utilitys
 {
     public class GameBoardTag : IGameBoardTag
     {

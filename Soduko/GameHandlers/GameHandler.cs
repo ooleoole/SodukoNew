@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Soduko.GameBoard;
+using Soduko.Utilitys;
 
 namespace Soduko.GameHandlers
 {
@@ -12,7 +13,7 @@ namespace Soduko.GameHandlers
     {
         private readonly IGameBoard _gameBoard;
         private IDictionary<IGameBoard, IGameBoard> _gameBoardGameKeysPair;
-        private int _difficultyLevel;
+        private readonly int _difficultyLevel;
         private ICollection<Coordinate> _coordinatesSeed;
         private readonly Random _random;
 
@@ -68,7 +69,8 @@ namespace Soduko.GameHandlers
             var removeAmount = 25 - _difficultyLevel;
             var removeSeed = GetCoordinatsSeed();
             int index;
-            for (int i = 0; i < removeAmount; i++)
+
+            for (var i = 0; i < removeAmount; i++)
             {
                 index = _random.Next(0, removeSeed.Count);
                 removeSeed.RemoveAt(index);
@@ -152,7 +154,6 @@ namespace Soduko.GameHandlers
 
             AddKeyGamePairToDic();
             ClearRandomValuesBasedOnDifficulty();
-
         }
 
         private void AddKeyGamePairToDic()
