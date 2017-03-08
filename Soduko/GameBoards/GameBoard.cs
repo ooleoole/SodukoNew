@@ -13,7 +13,6 @@ namespace Soduko.GameBoards
         private ICollection<GameBoardTag> _boardTags;
         private readonly int _gameBoardRoot;
 
-
         public int Count => _boardTags.Count;
         public int GameBoardRoot => _gameBoardRoot;
         public int GameBoardSize => _gameBoardRoot * _gameBoardRoot;
