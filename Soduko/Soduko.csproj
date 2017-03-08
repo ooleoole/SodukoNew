@@ -47,10 +47,10 @@
     <Compile Include="GameBoards\GameBoardOLD.cs" />
     <Compile Include="GameBoards\GameBoard.cs" />
     <Compile Include="Utilitys\GameBoardTag.cs" />
-    <Compile Include="Interfaceses\IGameBoard.cs" />
-    <Compile Include="Interfaceses\IGameBoardTag.cs" />
+    <Compile Include="Interfaces\IGameBoard.cs" />
+    <Compile Include="Interfaces\IGameBoardTag.cs" />
     <Compile Include="GameHandlers\GameHandler.cs" />
-    <Compile Include="Interfaceses\IGameHandler.cs" />
+    <Compile Include="Interfaces\IGameHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
