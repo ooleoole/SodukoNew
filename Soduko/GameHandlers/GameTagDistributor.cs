@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Soduko.GameBoard;
@@ -6,25 +6,20 @@ using Soduko.Utilitys;
 
 namespace Soduko.GameHandlers
 {
-    public class GameHandler : IGameHandler
+    public class GameTagDistributor
     {
-        private readonly IGameBoard _gameBoard;
-        private IDictionary<IGameBoard, IGameBoard> _gameBoardGameKeysPair;
-        private readonly int _difficultyLevel;
-        private ICollection<Coordinate> _coordinatesSeed;
+
         private readonly Random _random;
+        private ICollection<Coordinate> _coordinatesSeed;
+        private readonly IGameBoard _gameBoard;
 
-        public IDictionary<IGameBoard, IGameBoard> GameBoardGameKeysPair => _gameBoardGameKeysPair;
-
-        public GameHandler(IGameBoard gameBoard, int difficultylevel)
+        public GameTagDistributor(IGameBoardHolder boardHolder)
         {
-            _gameBoard = gameBoard;
-            _difficultyLevel = difficultylevel;
+            _gameBoard = boardHolder.GameBoard;
             _random = new Random(Guid.NewGuid().GetHashCode());
-            _gameBoardGameKeysPair = new Dictionary<IGameBoard, IGameBoard>();
         }
 
-        private GameBoardTag GetGameTag()
+        public GameBoardTag PlaceGameTag()
         {
             var randomX = _random.Next(1, 10);
             var randomY = _random.Next(1, 10);
@@ -61,35 +56,14 @@ namespace Soduko.GameHandlers
             } while (true);
         }
 
-        private void ClearRandomValuesBasedOnDifficulty()
-        {
-            var removeAmount = 25 - _difficultyLevel;
-            var removeSeed = GetCoordinatsSeed();
-            int index;
-
-            for (var i = 0; i < removeAmount; i++)
-            {
-                index = _random.Next(0, removeSeed.Count);
-                removeSeed.RemoveAt(index);
-            }
-
-            do
-            {
-                index = _random.Next(0, removeSeed.Count);
-                var randomCoordinate = removeSeed.ElementAt(index);
-                removeSeed.Remove(randomCoordinate);
-                var gameTag = new GameBoardTag(randomCoordinate);
-                _gameBoard.Replace(gameTag);
-            } while (removeSeed.Count != 0);
-
-        }
         private bool ValidateGameBoardTag(int value, Coordinate coordinate)
         {
             return !_gameBoard.Any(t => (t.Coordinate.X == coordinate.X && t.Value == value) ||
-                                        (t.Coordinate.Y == coordinate.Y && t.Value == value) ||
-                                        t.GameBoardRegion == new GameBoardTag(coordinate).GameBoardRegion
-                                        && t.Value == value);
+                                                     (t.Coordinate.Y == coordinate.Y && t.Value == value) ||
+                                                     t.GameBoardRegion == new GameBoardTag(coordinate).GameBoardRegion
+                                                     && t.Value == value);
         }
+
         private void BackTrackIfCoordinatesSeedIsEmpty()
         {
             if (!_coordinatesSeed.Any())
@@ -138,27 +112,6 @@ namespace Soduko.GameHandlers
             var coordX = _random.Next(1, _gameBoard.GameBoardRoot + 1);
             var coordY = _random.Next(1, _gameBoard.GameBoardRoot + 1);
             return new Coordinate(coordX, coordY);
-        }
-
-        public void GenerateGame()
-        {
-            do
-            {
-                var tag = GetGameTag();
-                _gameBoard.Add(tag);
-
-            } while (_gameBoard.Count < _gameBoard.GameBoardSize);
-
-            AddKeyGamePairToDic();
-            ClearRandomValuesBasedOnDifficulty();
-        }
-
-        private void AddKeyGamePairToDic()
-        {
-            var gameBoardKey = _gameBoard.Clone();
-            var gameBoard = _gameBoard;
-            var keyGamePair = new KeyValuePair<IGameBoard, IGameBoard>(gameBoardKey, gameBoard);
-            _gameBoardGameKeysPair.Add(keyGamePair);
         }
 
         private IList<Coordinate> GetCoordinatsSeed()

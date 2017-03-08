@@ -43,14 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameHandlers\GameTagDistributor.cs" />
+    <Compile Include="GameHandlers\IGameBoardHolder.cs" />
     <Compile Include="Utilitys\Coordinate.cs" />
     <Compile Include="GameBoards\GameBoardOLD.cs" />
     <Compile Include="GameBoards\GameBoard.cs" />
     <Compile Include="Utilitys\GameBoardTag.cs" />
     <Compile Include="Interfaces\IGameBoard.cs" />
     <Compile Include="Interfaces\IGameBoardTag.cs" />
-    <Compile Include="GameHandlers\GameHandler.cs" />
-    <Compile Include="Interfaces\IGameHandler.cs" />
+    <Compile Include="GameHandlers\GameCreator.cs" />
+    <Compile Include="Interfaces\IGameCreator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
