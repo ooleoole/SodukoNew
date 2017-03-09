@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameHandlers\GameTagDistributor.cs" />
-    <Compile Include="GameHandlers\IGameBoardHolder.cs" />
+    <Compile Include="Interfaces\IGameBoardHolder.cs" />
     <Compile Include="Utilitys\Coordinate.cs" />
     <Compile Include="GameBoards\GameBoardOLD.cs" />
     <Compile Include="GameBoards\GameBoard.cs" />
