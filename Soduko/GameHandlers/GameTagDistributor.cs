@@ -56,6 +56,27 @@ namespace Soduko.GameHandlers
             } while (true);
         }
 
+        public void RemoveRandomGameTagValues(int removeAmount)
+        {
+            var removeSeed = GetCoordinatsSeed();
+            int index;
+
+            for (var i = 0; i < removeAmount; i++)
+            {
+                index = _random.Next(0, removeSeed.Count);
+                removeSeed.RemoveAt(index);
+            }
+
+            do
+            {
+                index = _random.Next(0, removeSeed.Count);
+                var randomCoordinate = removeSeed.ElementAt(index);
+                removeSeed.Remove(randomCoordinate);
+                var gameTag = new GameBoardTag(randomCoordinate);
+                _gameBoard.Replace(gameTag);
+            } while (removeSeed.Count != 0);
+        }
+
         private bool ValidateGameBoardTag(int value, Coordinate coordinate)
         {
             return !_gameBoard.Any(t => (t.Coordinate.X == coordinate.X && t.Value == value) ||
@@ -113,6 +134,7 @@ namespace Soduko.GameHandlers
             var coordY = _random.Next(1, _gameBoard.GameBoardRoot + 1);
             return new Coordinate(coordX, coordY);
         }
+
 
         private IList<Coordinate> GetCoordinatsSeed()
         {

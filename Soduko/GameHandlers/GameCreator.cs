@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Soduko.GameBoard;
 using Soduko.Interfaces;
-using Soduko.Utilitys;
 
 namespace Soduko.GameHandlers
 {
     public class GameCreator : IGameCreator, IGameBoardHolder
     {
+        private const int GameBoardTagBase = 25;
+
         private readonly IGameBoard _gameBoard;
         private IDictionary<IGameBoard, IGameBoard> _gameBoardGameKeysPair;
         private readonly int _difficultyLevel;
-
         public IGameBoard GameBoard => _gameBoard;
         private readonly GameTagDistributor _gameTagDistributor;
 
@@ -26,28 +24,12 @@ namespace Soduko.GameHandlers
             _gameTagDistributor = new GameTagDistributor(this);
         }
 
-        //private void ClearRandomValuesBasedOnDifficulty()
-        //{
-        //    var removeAmount = 25 - _difficultyLevel;
-        //    var removeSeed = GetCoordinatsSeed();
-        //    int index;
+        private void ClearRandomValuesBasedOnDifficulty()
+        {
+            var removeAmount = GameBoardTagBase - _difficultyLevel;
+            _gameTagDistributor.RemoveRandomGameTagValues(removeAmount);
 
-        //    for (var i = 0; i < removeAmount; i++)
-        //    {
-        //        index = _random.Next(0, removeSeed.Count);
-        //        removeSeed.RemoveAt(index);
-        //    }
-
-        //    do
-        //    {
-        //        index = _random.Next(0, removeSeed.Count);
-        //        var randomCoordinate = removeSeed.ElementAt(index);
-        //        removeSeed.Remove(randomCoordinate);
-        //        var gameTag = new GameBoardTag(randomCoordinate);
-        //        _gameBoard.Replace(gameTag);
-        //    } while (removeSeed.Count != 0);
-
-        //}
+        }
 
         public void GenerateGame()
         {
@@ -59,13 +41,14 @@ namespace Soduko.GameHandlers
             } while (_gameBoard.Count < _gameBoard.GameBoardSize);
 
             AddKeyGamePairToDic();
-            //ClearRandomValuesBasedOnDifficulty();
+            _gameBoard.Clear();
         }
 
         private void AddKeyGamePairToDic()
         {
             var gameBoardKey = _gameBoard.Clone();
-            var gameBoard = _gameBoard;
+            ClearRandomValuesBasedOnDifficulty();
+            var gameBoard = _gameBoard.Clone();
             var keyGamePair = new KeyValuePair<IGameBoard, IGameBoard>(gameBoardKey, gameBoard);
             _gameBoardGameKeysPair.Add(keyGamePair);
         }
