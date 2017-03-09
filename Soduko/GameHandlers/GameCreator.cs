@@ -35,7 +35,7 @@ namespace Soduko.GameHandlers
         {
             do
             {
-                var tag = _gameTagDistributor.PlaceGameTag();
+                var tag = _gameTagDistributor.GetGameTag();
                 _gameBoard.Add(tag);
 
             } while (_gameBoard.Count < _gameBoard.GameBoardSize);

@@ -19,7 +19,7 @@ namespace Soduko.GameHandlers
             _random = new Random(Guid.NewGuid().GetHashCode());
         }
 
-        public GameBoardTag PlaceGameTag()
+        public GameBoardTag GetGameTag()
         {
             var randomX = _random.Next(1, 10);
             var randomY = _random.Next(1, 10);
