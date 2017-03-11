@@ -17,6 +17,6 @@ namespace Soduko.GameBoard
         bool Remove(GameBoardTag tag);
         IGameBoard Clone();
         void LoadCoordinatesSeed();
-        void LoadCoordinatesSeedExludePlacedTags();
+        void LoadFreeCoordinatesSeed();
     }
 }

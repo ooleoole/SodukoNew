@@ -114,7 +114,7 @@ namespace Soduko.GameHandlers
 
         private void BackTrack()
         {
-            _gameBoard.LoadCoordinatesSeedExludePlacedTags();
+            _gameBoard.LoadFreeCoordinatesSeed();
             RemoveRandomCoordinateFromGameBoard();
 
         }

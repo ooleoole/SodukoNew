@@ -12,7 +12,7 @@ namespace Soduko.GameBoards
     {
         private IList<GameBoardTag> _boardTags;
         private readonly int _gameBoardRoot;
-        private IList<Coordinate> _coordinatesSeed;
+        private readonly IList<Coordinate> _coordinatesSeed;
 
         public IList<Coordinate> CoordinatesSeed => _coordinatesSeed;
         public int Count => _boardTags.Count;
@@ -25,7 +25,7 @@ namespace Soduko.GameBoards
             _gameBoardRoot = gameBoardRoot;
             _boardTags = new Collection<GameBoardTag>();
             _coordinatesSeed = new List<Coordinate>(_gameBoardRoot * _gameBoardRoot);
-            LoadCoordinatesSeedExludePlacedTags();
+            LoadFreeCoordinatesSeed();
         }
 
 
@@ -134,10 +134,10 @@ namespace Soduko.GameBoards
                     y++;
                 }
             }
-            
+
         }
 
-        public void LoadCoordinatesSeedExludePlacedTags()
+        public void LoadFreeCoordinatesSeed()
         {
             LoadCoordinatesSeed();
             ExludePlacedTagsFromSeed();
@@ -151,9 +151,8 @@ namespace Soduko.GameBoards
                 for (int j = 0; j < _boardTags.Count; j++)
                 {
                     var tag = _boardTags.ElementAt(j);
-                    if (tag.Value != null)
-                        if (tag.Coordinate == coord)
-                            _coordinatesSeed.Remove(coord);
+                    if (tag.Value != null && tag.Coordinate == coord)
+                        _coordinatesSeed.Remove(coord);
 
                 }
             }

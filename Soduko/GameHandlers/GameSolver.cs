@@ -1,14 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Soduko.GameBoard;
-using Soduko.Utilitys;
 
 namespace Soduko.GameHandlers
 {
     public class GameSolver : IGameBoardHolder
     {
-        public IGameBoard GameBoard { get; }
+        private IGameBoard _gameBoard;
+        private IDictionary<IGameBoard, IEnumerable<IGameBoard>> _targetSolutionGameBoard;
+
+        public IGameBoard GameBoard => _gameBoard;
+        public IDictionary<IGameBoard, IEnumerable<IGameBoard>> TargetSolutionGameBoards => _targetSolutionGameBoard;
 
 
+        public GameSolver(IGameBoard gameBoard)
+        {
+
+        }
     }
 }

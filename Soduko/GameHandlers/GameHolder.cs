@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Soduko.GameBoard;
 using Soduko.Interfaces;
-using Soduko.Utilitys;
 
 namespace Soduko.GameHandlers
 {
@@ -40,7 +39,7 @@ namespace Soduko.GameHandlers
 
         public void LoadGame()
         {
-            _gameBoard.LoadCoordinatesSeedExludePlacedTags();
+            _gameBoard.LoadFreeCoordinatesSeed();
             _gameTagDistributor.PlaceGameTags();
 
             AddKeyGamePairToDic();
