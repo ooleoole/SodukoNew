@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameHandlers\GameSolver.cs" />
     <Compile Include="GameHandlers\GameTagDistributor.cs" />
     <Compile Include="Interfaces\IGameBoardHolder.cs" />
     <Compile Include="Utilitys\Coordinate.cs" />
@@ -51,8 +52,8 @@
     <Compile Include="Utilitys\GameBoardTag.cs" />
     <Compile Include="Interfaces\IGameBoard.cs" />
     <Compile Include="Interfaces\IGameBoardTag.cs" />
-    <Compile Include="GameHandlers\GameCreator.cs" />
-    <Compile Include="Interfaces\IGameCreator.cs" />
+    <Compile Include="GameHandlers\GameHolder.cs" />
+    <Compile Include="Interfaces\IGameHolder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -3,9 +3,9 @@ using Soduko.GameBoard;
 
 namespace Soduko.Interfaces
 {
-    public interface IGameCreator
+    public interface IGameHolder
     {
         IDictionary<IGameBoard, IGameBoard> GameBoardGameKeysPair { get;}
-        void GenerateGame();
+        void LoadGame();
     }
 }

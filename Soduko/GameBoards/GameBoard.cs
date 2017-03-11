@@ -10,9 +10,11 @@ namespace Soduko.GameBoards
 {
     public class GameBoard : IGameBoard
     {
-        private ICollection<GameBoardTag> _boardTags;
+        private IList<GameBoardTag> _boardTags;
         private readonly int _gameBoardRoot;
+        private IList<Coordinate> _coordinatesSeed;
 
+        public IList<Coordinate> CoordinatesSeed => _coordinatesSeed;
         public int Count => _boardTags.Count;
         public int GameBoardRoot => _gameBoardRoot;
         public int GameBoardSize => _gameBoardRoot * _gameBoardRoot;
@@ -22,6 +24,8 @@ namespace Soduko.GameBoards
 
             _gameBoardRoot = gameBoardRoot;
             _boardTags = new Collection<GameBoardTag>();
+            _coordinatesSeed = new List<Coordinate>(_gameBoardRoot * _gameBoardRoot);
+            LoadCoordinatesSeedExludePlacedTags();
         }
 
 
@@ -108,6 +112,58 @@ namespace Soduko.GameBoards
                 clone.Add(tag);
             }
             return clone;
+        }
+        public void LoadCoordinatesSeed()
+        {
+            var x = 0;
+            var y = 1;
+            ClearCoordinatesSeed();
+            for (int i = 0; i < _gameBoardRoot * _gameBoardRoot; i++)
+            {
+                x++;
+                _coordinatesSeed.Add(new Coordinate(x, y));
+
+                if (x == _gameBoardRoot)
+                {
+                    x = 0;
+
+                    if (y == _gameBoardRoot)
+                    {
+                        y = 0;
+                    }
+                    y++;
+                }
+            }
+            
+        }
+
+        public void LoadCoordinatesSeedExludePlacedTags()
+        {
+            LoadCoordinatesSeed();
+            ExludePlacedTagsFromSeed();
+        }
+
+        private void ExludePlacedTagsFromSeed()
+        {
+            for (int i = 0; i < _coordinatesSeed.Count; i++)
+            {
+                var coord = _coordinatesSeed.ElementAt(i);
+                for (int j = 0; j < _boardTags.Count; j++)
+                {
+                    var tag = _boardTags.ElementAt(j);
+                    if (tag.Value != null)
+                        if (tag.Coordinate == coord)
+                            _coordinatesSeed.Remove(coord);
+
+                }
+            }
+        }
+        private void ClearCoordinatesSeed()
+        {
+            if (_coordinatesSeed.Count != 0)
+            {
+                _coordinatesSeed.Clear();
+            }
         }
         public override string ToString()
         {

@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
 using Soduko.GameBoard;
 using Soduko.Interfaces;
+using Soduko.Utilitys;
 
 namespace Soduko.GameHandlers
 {
-    public class GameCreator : IGameCreator, IGameBoardHolder
+    public class GameHolder : IGameHolder, IGameBoardHolder
     {
-        private const int GameBoardTagBase = 25;
+        private const int RemoveBase = 63;
 
         private readonly IGameBoard _gameBoard;
-        private IDictionary<IGameBoard, IGameBoard> _gameBoardGameKeysPair;
+        private readonly IDictionary<IGameBoard, IGameBoard> _gameBoardGameKeysPair;
         private readonly int _difficultyLevel;
-        public IGameBoard GameBoard => _gameBoard;
         private readonly GameTagDistributor _gameTagDistributor;
 
+        public IGameBoard GameBoard => _gameBoard;
         public IDictionary<IGameBoard, IGameBoard> GameBoardGameKeysPair => _gameBoardGameKeysPair;
 
-        public GameCreator(IGameBoard gameBoard, int difficultylevel)
+        public GameHolder(IGameBoard gameBoard, int difficultylevel)
         {
             _gameBoard = gameBoard;
             _difficultyLevel = difficultylevel;
@@ -26,19 +27,21 @@ namespace Soduko.GameHandlers
 
         private void ClearRandomValuesBasedOnDifficulty()
         {
-            var removeAmount = GameBoardTagBase - _difficultyLevel;
-            _gameTagDistributor.RemoveRandomGameTagValues(removeAmount);
+            var removeAmount = RemoveBase + _difficultyLevel;
+            _gameBoard.LoadCoordinatesSeed();
+            for (var i = 0; i < removeAmount; i++)
+            {
+                _gameTagDistributor.RemoveRandomGameTagValue();
+
+            }
 
         }
 
-        public void GenerateGame()
-        {
-            do
-            {
-                var tag = _gameTagDistributor.PlaceGameTag();
-                _gameBoard.Add(tag);
 
-            } while (_gameBoard.Count < _gameBoard.GameBoardSize);
+        public void LoadGame()
+        {
+            _gameBoard.LoadCoordinatesSeedExludePlacedTags();
+            _gameTagDistributor.PlaceGameTags();
 
             AddKeyGamePairToDic();
             _gameBoard.Clear();

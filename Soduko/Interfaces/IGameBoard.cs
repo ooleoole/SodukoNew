@@ -8,12 +8,15 @@ namespace Soduko.GameBoard
         int Count { get; }
         int GameBoardRoot { get; }
         int GameBoardSize { get; }
-        IEnumerator<GameBoardTag> GetEnumerator();
+        IList<Coordinate> CoordinatesSeed { get; }
+        new IEnumerator<GameBoardTag> GetEnumerator();
         void Add(GameBoardTag tag);
         void Clear();
         void Replace(GameBoardTag tag);
         bool RemoveAt(Coordinate coordinate);
         bool Remove(GameBoardTag tag);
         IGameBoard Clone();
+        void LoadCoordinatesSeed();
+        void LoadCoordinatesSeedExludePlacedTags();
     }
 }

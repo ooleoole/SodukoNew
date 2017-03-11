@@ -1,13 +1,14 @@
+using Soduko.GameBoard;
 using Soduko.Utilitys;
 
-namespace Soduko.GameBoard
+namespace Soduko.Interfaces
 {
     public interface IGameBoardTag
     {
         Coordinate Coordinate { get; }
         int? Value { get; }
         GameBoardTag.Region GameBoardRegion { get; }
-        string ToString();
+        
         
     }
 }

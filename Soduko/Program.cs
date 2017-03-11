@@ -12,10 +12,10 @@ namespace Soduko
 
             var gameBoard2 = new GameBoards.GameBoard(9);
             
-            var gameCreator = new GameCreator(gameBoard2, 3);
+            var gameCreator = new GameHolder(gameBoard2, 3);
 
-            gameCreator.GenerateGame();
-            gameCreator.GenerateGame();
+            gameCreator.LoadGame();
+            gameCreator.LoadGame();
 
             var gameKey = gameCreator.GameBoardGameKeysPair.Keys.ElementAt(0);
             var game = gameCreator.GameBoardGameKeysPair.Values.ElementAt(0);

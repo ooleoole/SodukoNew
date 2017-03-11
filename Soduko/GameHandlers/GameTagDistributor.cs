@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Soduko.GameBoard;
 using Soduko.Utilitys;
@@ -10,71 +11,62 @@ namespace Soduko.GameHandlers
     {
 
         private readonly Random _random;
-        private ICollection<Coordinate> _coordinatesSeed;
         private readonly IGameBoard _gameBoard;
-
+        private IGameBoardHolder _boardHolder;
         public GameTagDistributor(IGameBoardHolder boardHolder)
         {
+            _boardHolder = boardHolder;
             _gameBoard = boardHolder.GameBoard;
             _random = new Random(Guid.NewGuid().GetHashCode());
         }
 
-        public GameBoardTag PlaceGameTag()
+        public void PlaceGameTags()
         {
-            var randomX = _random.Next(1, 10);
-            var randomY = _random.Next(1, 10);
-            var coordinates = new Coordinate(randomX, randomY);
-            _coordinatesSeed = GetCoordinatsSeed();
-
+            var startTime = DateTime.UtcNow;
             do
             {
-                var valueSeed = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-                if (_gameBoard.All(t => t.Coordinate != coordinates))
+                var coordinate = GetRandomCoordinatesFromSeed();
+                RemoveCoordinatesFromSeed(coordinate);
+
+                var valueSeed = GetValueSeed();
+                if (_gameBoard.All(t => t.Coordinate != coordinate))
                 {
                     do
                     {
                         var value = GetRandomValueFromSeed(valueSeed);
                         valueSeed = RemoveValueFromSeed(valueSeed, value);
 
-                        if (ValidateGameBoardTag(value, coordinates))
-                            return new GameBoardTag(coordinates, value);
+                        if (ValidateGameBoardTag(value, coordinate))
+                        {
+                            _gameBoard.Add(new GameBoardTag(coordinate, value));
+                            break;
+                        }
+
 
                     } while (valueSeed.Length != 0);
-
-                    RemoveCoordinatesFromSeed(coordinates);
-                    BackTrackIfCoordinatesSeedIsEmpty();
-                    coordinates = GetRandomCoordinatesFromSeed();
                 }
-
-                else
-                {
-                    RemoveCoordinatesFromSeed(coordinates);
-                    BackTrackIfCoordinatesSeedIsEmpty();
-                    coordinates = GetRandomCoordinatesFromSeed();
-                }
-
-            } while (true);
+                BackTrackIfCoordinatesSeedIsEmpty();
+            } while (_gameBoard.Count < _gameBoard.GameBoardSize && DateTime.UtcNow - startTime < TimeSpan.FromSeconds(5));
         }
 
-        public void RemoveRandomGameTagValues(int removeAmount)
+        private int[] GetValueSeed()
         {
-            var removeSeed = GetCoordinatsSeed();
-            int index;
-
-            for (var i = 0; i < removeAmount; i++)
+            var valueSeed = new int[_gameBoard.GameBoardRoot];
+            for (int i = 0; i < _gameBoard.GameBoardRoot; i++)
             {
-                index = _random.Next(0, removeSeed.Count);
-                removeSeed.RemoveAt(index);
+                valueSeed[i] = i + 1;
             }
+            return valueSeed;
+        }
 
-            do
-            {
-                index = _random.Next(0, removeSeed.Count);
-                var randomCoordinate = removeSeed.ElementAt(index);
-                removeSeed.Remove(randomCoordinate);
-                var gameTag = new GameBoardTag(randomCoordinate);
-                _gameBoard.Replace(gameTag);
-            } while (removeSeed.Count != 0);
+        public void RemoveRandomGameTagValue()
+        {
+            int randomIndex = _random.Next(0, _gameBoard.CoordinatesSeed.Count);
+            var coordinate = _gameBoard.CoordinatesSeed.ElementAt(randomIndex);
+            RemoveCoordinatesFromSeed(coordinate);
+            _gameBoard.Replace(new GameBoardTag(coordinate));
+
+
         }
 
         private bool ValidateGameBoardTag(int value, Coordinate coordinate)
@@ -87,9 +79,9 @@ namespace Soduko.GameHandlers
 
         private void BackTrackIfCoordinatesSeedIsEmpty()
         {
-            if (!_coordinatesSeed.Any())
+            if (!_gameBoard.CoordinatesSeed.Any())
             {
-                _coordinatesSeed = BackTrackCoordinatesSeed();
+                BackTrack();
                 Console.Write(".");
             }
         }
@@ -109,23 +101,28 @@ namespace Soduko.GameHandlers
 
         private void RemoveCoordinatesFromSeed(Coordinate coordinate)
         {
-            _coordinatesSeed.Remove(coordinate);
+            _gameBoard.CoordinatesSeed.Remove(coordinate);
 
         }
 
         private Coordinate GetRandomCoordinatesFromSeed()
         {
-            var index = _random.Next(0, _coordinatesSeed.Count);
-            var coordinates = _coordinatesSeed.ElementAt(index);
+            var index = _random.Next(0, _gameBoard.CoordinatesSeed.Count);
+            var coordinates = _gameBoard.CoordinatesSeed.ElementAt(index);
             return coordinates;
         }
 
-        private IList<Coordinate> BackTrackCoordinatesSeed()
+        private void BackTrack()
         {
-            var coordinatesSeed = GetCoordinatsSeed();
+            _gameBoard.LoadCoordinatesSeedExludePlacedTags();
+            RemoveRandomCoordinateFromGameBoard();
+
+        }
+
+        private void RemoveRandomCoordinateFromGameBoard()
+        {
             var coordinates = GetRandomCoordinate();
             _gameBoard.RemoveAt(coordinates);
-            return coordinatesSeed;
         }
 
         private Coordinate GetRandomCoordinate()
@@ -136,28 +133,6 @@ namespace Soduko.GameHandlers
         }
 
 
-        private IList<Coordinate> GetCoordinatsSeed()
-        {
-            var x = 0;
-            var y = 1;
-            var coordinates = new List<Coordinate>(_gameBoard.GameBoardSize);
-            for (int i = 0; i < _gameBoard.GameBoardSize; i++)
-            {
-                x++;
-                coordinates.Add(new Coordinate(x, y));
 
-                if (x == _gameBoard.GameBoardRoot)
-                {
-                    x = 0;
-
-                    if (y == _gameBoard.GameBoardRoot)
-                    {
-                        y = 0;
-                    }
-                    y++;
-                }
-            }
-            return coordinates;
-        }
     }
 }
