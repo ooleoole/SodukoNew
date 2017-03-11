@@ -29,7 +29,7 @@ namespace Soduko.GameHandlers
                 RemoveCoordinatesFromSeed(coordinate);
 
                 var valueSeed = GetValueSeed();
-                if (_gameBoard.All(t => t.Coordinate != coordinate))
+                if (_gameBoard.Where(t => t.Value != null).Any(t => t.Coordinate != coordinate) || _gameBoard.Count == 0)
                 {
                     do
                     {
@@ -38,7 +38,7 @@ namespace Soduko.GameHandlers
 
                         if (ValidateGameBoardTag(value, coordinate))
                         {
-                            _gameBoard.Add(new GameBoardTag(coordinate, value));
+                            _gameBoard.AddOrReplace(new GameBoardTag(coordinate, value));
                             break;
                         }
 

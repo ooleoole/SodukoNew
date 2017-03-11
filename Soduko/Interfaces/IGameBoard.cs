@@ -18,5 +18,6 @@ namespace Soduko.GameBoard
         IGameBoard Clone();
         void LoadCoordinatesSeed();
         void LoadFreeCoordinatesSeed();
+        void AddOrReplace(GameBoardTag tag);
     }
 }

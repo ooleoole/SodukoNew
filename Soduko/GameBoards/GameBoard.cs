@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Soduko.GameBoard;
+using Soduko.Interfaces;
 using Soduko.Utilitys;
 
 namespace Soduko.GameBoards
@@ -52,6 +53,15 @@ namespace Soduko.GameBoards
             _boardTags.Clear();
         }
         public void Replace(GameBoardTag tag)
+        {
+            ValidateTag(tag);
+            if (!RemoveAt(tag.Coordinate))
+                throw new ArgumentException("Tag not found");
+            _boardTags.Add(tag);
+            _boardTags = _boardTags.OrderByDescending(r => r.Coordinate.Y).ThenBy(c => c.Coordinate.X).ToList();
+        }
+
+        public void AddOrReplace(GameBoardTag tag)
         {
             ValidateTag(tag);
             RemoveAt(tag.Coordinate);
@@ -164,6 +174,7 @@ namespace Soduko.GameBoards
                 _coordinatesSeed.Clear();
             }
         }
+
         public override string ToString()
         {
             int counter = 0;

@@ -11,7 +11,7 @@ namespace Soduko
 
 
             var gameBoard2 = new GameBoards.GameBoard(9);
-            
+
             var gameCreator = new GameHolder(gameBoard2, 3);
 
             gameCreator.LoadGame();
@@ -30,10 +30,22 @@ namespace Soduko
             Console.WriteLine(game2);
             Console.WriteLine(gameKey2);
 
+            var gameSolver = new GameSolver(game2);
+            gameSolver.SolveBoard();
+
+            var target = gameSolver.TargetSolutionGameBoards.Keys.ElementAt(0);
+            var solutuion = gameSolver.TargetSolutionGameBoards.Values.ElementAt(0).FirstOrDefault();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------");
+            Console.WriteLine(target);
+            Console.WriteLine(solutuion);
+
             Console.ReadKey();
 
         }
     }
 
-   
+
 }
