@@ -1,4 +1,5 @@
-﻿using Soduko.GameBoard;
+﻿using System;
+using Soduko.GameBoard;
 using Soduko.Interfaces;
 
 namespace Soduko.Utilitys
@@ -64,6 +65,40 @@ namespace Soduko.Utilitys
                 else if (Coordinate.Y >= 7 && Coordinate.Y <= 9)
                     _gameBoardRegion = Region.Nine;
             }
+        }
+
+        public bool Equals(GameBoardTag other)
+        {
+            if (other == null) return false;
+            return Coordinate == other.Coordinate &&
+                   Value == other.Value;
+
+        }
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals(obj as GameBoardTag);
+        }
+
+        public override int GetHashCode()
+        {
+            return (this.Coordinate.X + 2) ^ (this.Coordinate.Y + 2) ^ (Value + 2 ?? 7 + 2);
+        }
+
+        public static bool operator ==(GameBoardTag tag1, GameBoardTag tag2)
+        {
+            if (object.ReferenceEquals(tag1, null))
+            {
+                return object.ReferenceEquals(tag2, null);
+            }
+
+            return tag1.Equals(tag2);
+        }
+
+        public static bool operator !=(GameBoardTag tag1, GameBoardTag tag2)
+        {
+            return !(tag1 == tag2);
         }
 
         public enum Region

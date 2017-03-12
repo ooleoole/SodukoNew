@@ -20,6 +20,7 @@ namespace Soduko.GameHandlers
             _gameBoard = gameBoard;
             _targetSolutionGameBoard = new Dictionary<IGameBoard, ICollection<IGameBoard>>();
             _gameTagDistributor = new GameTagDistributor(this);
+            _gameBoard.LoadFreeCoordinatesSeed();
         }
 
         public void SolveBoard()

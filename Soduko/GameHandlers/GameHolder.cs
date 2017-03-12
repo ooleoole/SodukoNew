@@ -28,6 +28,7 @@ namespace Soduko.GameHandlers
         {
             var removeAmount = RemoveBase + _difficultyLevel;
             _gameBoard.LoadCoordinatesSeed();
+
             for (var i = 0; i < removeAmount; i++)
             {
                 _gameTagDistributor.RemoveRandomGameTagValue();

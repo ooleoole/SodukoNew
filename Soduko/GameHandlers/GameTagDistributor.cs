@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Soduko.GameBoard;
+using Soduko.Interfaces;
 using Soduko.Utilitys;
 
 namespace Soduko.GameHandlers
@@ -13,9 +14,12 @@ namespace Soduko.GameHandlers
         private readonly Random _random;
         private readonly IGameBoard _gameBoard;
         private IGameBoardHolder _boardHolder;
+        private IGameBoard _startingBase;
         public GameTagDistributor(IGameBoardHolder boardHolder)
         {
+
             _boardHolder = boardHolder;
+            _startingBase = boardHolder.GameBoard.Clone();
             _gameBoard = boardHolder.GameBoard;
             _random = new Random(Guid.NewGuid().GetHashCode());
         }
@@ -23,6 +27,7 @@ namespace Soduko.GameHandlers
         public void PlaceGameTags()
         {
             var startTime = DateTime.UtcNow;
+
             do
             {
                 var coordinate = GetRandomCoordinatesFromSeed();
@@ -35,10 +40,10 @@ namespace Soduko.GameHandlers
                     {
                         var value = GetRandomValueFromSeed(valueSeed);
                         valueSeed = RemoveValueFromSeed(valueSeed, value);
-
-                        if (ValidateGameBoardTag(value, coordinate))
+                        var tag = new GameBoardTag(coordinate, value);
+                        if (ValidateGameBoardTag(tag))
                         {
-                            _gameBoard.AddOrReplace(new GameBoardTag(coordinate, value));
+                            _gameBoard.AddOrReplace(tag);
                             break;
                         }
 
@@ -46,7 +51,7 @@ namespace Soduko.GameHandlers
                     } while (valueSeed.Length != 0);
                 }
                 BackTrackIfCoordinatesSeedIsEmpty();
-            } while (_gameBoard.Count < _gameBoard.GameBoardSize && DateTime.UtcNow - startTime < TimeSpan.FromSeconds(5));
+            } while (_gameBoard.Count(t => t.Value != null) < 81 && DateTime.UtcNow - startTime < TimeSpan.FromSeconds(1000));
         }
 
         private int[] GetValueSeed()
@@ -69,12 +74,18 @@ namespace Soduko.GameHandlers
 
         }
 
-        private bool ValidateGameBoardTag(int value, Coordinate coordinate)
+        private bool ValidateGameBoardTag(GameBoardTag tag)
         {
-            return !_gameBoard.Any(t => (t.Coordinate.X == coordinate.X && t.Value == value) ||
-                                                     (t.Coordinate.Y == coordinate.Y && t.Value == value) ||
-                                                     t.GameBoardRegion == new GameBoardTag(coordinate).GameBoardRegion
-                                                     && t.Value == value);
+            if (_startingBase.Contains(tag))
+            {
+                return false;
+            }
+            return !_gameBoard.Any(t => (t.Coordinate.X == tag.Coordinate.X && t.Value == tag.Value) ||
+                                        (t.Coordinate.Y == tag.Coordinate.Y && t.Value == tag.Value) ||
+                                        t.GameBoardRegion == tag.GameBoardRegion
+                                        && t.Value == tag.Value);
+
+
         }
 
         private void BackTrackIfCoordinatesSeedIsEmpty()
@@ -107,6 +118,7 @@ namespace Soduko.GameHandlers
 
         private Coordinate GetRandomCoordinatesFromSeed()
         {
+
             var index = _random.Next(0, _gameBoard.CoordinatesSeed.Count);
             var coordinates = _gameBoard.CoordinatesSeed.ElementAt(index);
             return coordinates;
@@ -127,9 +139,26 @@ namespace Soduko.GameHandlers
 
         private Coordinate GetRandomCoordinate()
         {
-            var coordX = _random.Next(1, _gameBoard.GameBoardRoot + 1);
-            var coordY = _random.Next(1, _gameBoard.GameBoardRoot + 1);
-            return new Coordinate(coordX, coordY);
+            Coordinate coord;
+            bool looper;
+            var Teste=new List<Coordinate>();
+            do
+            {
+                looper = false;
+                
+               
+                var test = _startingBase.Where(t => t.Value != null).ToList();
+
+                Teste.AddRange(test.Select(tag => tag.Coordinate));
+                _gameBoard.LoadCoordinatesSeed();
+                var coordinates = _gameBoard.CoordinatesSeed;
+                var testetet = coordinates.Except(Teste);
+                var index = _random.Next(1,testetet.Count() );
+                coord = testetet.ElementAt(index);
+
+            } while (looper);
+
+            return coord;
         }
 
 

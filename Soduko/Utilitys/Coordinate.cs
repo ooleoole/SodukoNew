@@ -16,7 +16,7 @@
 
         public override int GetHashCode()
         {
-            return (this.X + 2) ^ (this.Y + 2);
+            return (X + 7) ^ (Y + 7);
         }
 
         public override bool Equals(object obj)
