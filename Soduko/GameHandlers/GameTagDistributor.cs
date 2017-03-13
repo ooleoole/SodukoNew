@@ -28,7 +28,9 @@ namespace Soduko.GameHandlers
 
             do
             {
+                //_gameBoard.LoadFreeCoordinatesSeed();
                 var coordinate = GetRandomCoordinatesFromSeed();
+
                 RemoveCoordinatesFromSeed(coordinate);
 
                 var valueSeed = GetValueSeed();
@@ -41,10 +43,7 @@ namespace Soduko.GameHandlers
                         var tag = new GameBoardTag(coordinate, value);
                         if (ValidateGameBoardTag(tag))
                         {
-                            if (_startingBase.Contains(tag))
-                            {
-                                throw new ArgumentException();
-                            }
+                            
                             _gameBoard.AddOrReplace(tag);
                             break;
                         }
@@ -79,7 +78,7 @@ namespace Soduko.GameHandlers
 
         private bool ValidateGameBoardTag(GameBoardTag tag)
         {
-            if (_startingBase.Contains(tag))
+            if (_startingBase.Any(t => t.Coordinate == tag.Coordinate && t.Value != null))
             {
                 return false;
             }
@@ -147,7 +146,7 @@ namespace Soduko.GameHandlers
             var test = _gameBoard.Intersect(sdgsdg);
             foreach (var tag in sdgsdg)
             {
-                if(!test.Contains(tag))
+                if (!test.Contains(tag))
                 {
                     Console.WriteLine("vsdfgsdfg");
                 }

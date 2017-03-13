@@ -25,6 +25,7 @@ namespace Soduko.GameHandlers
 
         public void SolveBoard()
         {
+
             SaveTarget();
             _gameBoard.LoadFreeCoordinatesSeed();
             _gameTagDistributor.PlaceGameTags();
