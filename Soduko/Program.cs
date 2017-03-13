@@ -19,12 +19,8 @@ namespace Soduko
             gameCreator.LoadGame();
             gameCreator.LoadGame();
 
-            var testtag1 = new GameBoardTag(new Coordinate(1, 1), 1);
-            var testtag2 = new GameBoardTag(new Coordinate(1, 1), 1);
-            Console.WriteLine(testtag2==testtag1);
-            Console.ReadKey();
-            Console.WriteLine(testtag2.Coordinate==testtag1.Coordinate);
-            Console.ReadKey();
+     
+         
 
             var gameKey = gameCreator.GameBoardGameKeysPair.Keys.ElementAt(0);
             var game = gameCreator.GameBoardGameKeysPair.Values.ElementAt(0);

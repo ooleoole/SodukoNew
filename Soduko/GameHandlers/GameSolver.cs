@@ -7,8 +7,8 @@ namespace Soduko.GameHandlers
 {
     public class GameSolver : IGameBoardHolder
     {
-        private IGameBoard _gameBoard;
-        private IDictionary<IGameBoard, ICollection<IGameBoard>> _targetSolutionGameBoard;
+        private readonly IGameBoard _gameBoard;
+        private readonly IDictionary<IGameBoard, ICollection<IGameBoard>> _targetSolutionGameBoard;
         private readonly GameTagDistributor _gameTagDistributor;
 
         public IGameBoard GameBoard => _gameBoard;
@@ -20,7 +20,7 @@ namespace Soduko.GameHandlers
             _gameBoard = gameBoard;
             _targetSolutionGameBoard = new Dictionary<IGameBoard, ICollection<IGameBoard>>();
             _gameTagDistributor = new GameTagDistributor(this);
-            _gameBoard.LoadFreeCoordinatesSeed();
+            
         }
 
         public void SolveBoard()
@@ -37,7 +37,7 @@ namespace Soduko.GameHandlers
             var gameBoardSolution = _gameBoard.Clone();
             var values=_targetSolutionGameBoard.Values;
             var value = values.FirstOrDefault();
-            value.Add(gameBoardSolution);
+            value?.Add(gameBoardSolution);
         }
 
         private void SaveTarget()
