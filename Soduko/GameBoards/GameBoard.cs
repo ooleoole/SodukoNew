@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Soduko.GameBoard;
-using Soduko.Interfaces;
 using Soduko.Utilitys;
 
 namespace Soduko.GameBoards
@@ -116,7 +115,7 @@ namespace Soduko.GameBoards
 
         public IGameBoard Clone()
         {
-            IGameBoard clone = new GameBoard(GameBoardRoot);
+            var clone = new GameBoard(GameBoardRoot);
             foreach (var tag in _boardTags)
             {
                 clone.Add(tag);

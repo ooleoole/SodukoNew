@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Soduko.GameBoard;
-using Soduko.Interfaces;
 using Soduko.Utilitys;
 
 namespace Soduko.GameHandlers
@@ -13,12 +11,12 @@ namespace Soduko.GameHandlers
 
         private readonly Random _random;
         private readonly IGameBoard _gameBoard;
-        private IGameBoardHolder _boardHolder;
-        private IGameBoard _startingBase;
+        // private IGameBoardHolder _boardHolder;
+        private readonly IGameBoard _startingBase;
         public GameTagDistributor(IGameBoardHolder boardHolder)
         {
 
-            _boardHolder = boardHolder;
+            // _boardHolder = boardHolder;
             _startingBase = boardHolder.GameBoard.Clone();
             _gameBoard = boardHolder.GameBoard;
             _random = new Random(Guid.NewGuid().GetHashCode());
@@ -56,6 +54,7 @@ namespace Soduko.GameHandlers
                 }
                 BackTrackIfCoordinatesSeedIsEmpty();
             } while (_gameBoard.Count(t => t.Value != null) < 81 && DateTime.UtcNow - startTime < TimeSpan.FromSeconds(1000));
+
         }
 
         private int[] GetValueSeed()
@@ -138,21 +137,28 @@ namespace Soduko.GameHandlers
         private void RemoveRandomCoordinateFromGameBoard()
         {
             var coordinates = GetRandomCoordinate();
-            if (_startingBase.Any(t=>t.Coordinate==coordinates&&t.Value!=null))
+            if (_startingBase.Any(t => t.Coordinate == coordinates && t.Value != null))
             {
                 throw new AccessViolationException();
             }
+
             _gameBoard.RemoveAt(coordinates);
+            var sdgsdg = _startingBase.Where(t => t.Value != null);
+            var test = _gameBoard.Intersect(sdgsdg);
+            foreach (var tag in sdgsdg)
+            {
+                if(!test.Contains(tag))
+                {
+                    Console.WriteLine("vsdfgsdfg");
+                }
+            }
         }
 
         private Coordinate GetRandomCoordinate()
         {
             Coordinate coord;
-         
+
             var Teste = new List<Coordinate>();
-
-
-
 
             var test = _startingBase.Where(t => t.Value != null).ToList();
 
@@ -160,8 +166,9 @@ namespace Soduko.GameHandlers
             _gameBoard.LoadCoordinatesSeed();
             var coordinates = _gameBoard.CoordinatesSeed;
             var testetet = coordinates.Except(Teste);
-            var index = _random.Next(1, testetet.Count());
-            coord = testetet.ElementAt(index);
+            IEnumerable<Coordinate> enumerable = testetet as IList<Coordinate> ?? testetet.ToList();
+            var index = _random.Next(1, enumerable.Count());
+            coord = enumerable.ElementAt(index);
 
 
 

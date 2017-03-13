@@ -11,7 +11,7 @@ namespace Soduko.Utilitys
         private Region _gameBoardRegion;
 
         public Coordinate Coordinate => _coordinates;
-        public int? Value => _value;
+        public  int? Value => _value;
         public Region GameBoardRegion => _gameBoardRegion;
         public GameBoardTag(Coordinate coordinate, int? value)
         {
