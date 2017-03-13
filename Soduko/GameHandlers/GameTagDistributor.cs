@@ -43,6 +43,10 @@ namespace Soduko.GameHandlers
                         var tag = new GameBoardTag(coordinate, value);
                         if (ValidateGameBoardTag(tag))
                         {
+                            if (_startingBase.Contains(tag))
+                            {
+                                throw new ArgumentException();
+                            }
                             _gameBoard.AddOrReplace(tag);
                             break;
                         }
@@ -134,29 +138,32 @@ namespace Soduko.GameHandlers
         private void RemoveRandomCoordinateFromGameBoard()
         {
             var coordinates = GetRandomCoordinate();
+            if (_startingBase.Any(t=>t.Coordinate==coordinates&&t.Value!=null))
+            {
+                throw new AccessViolationException();
+            }
             _gameBoard.RemoveAt(coordinates);
         }
 
         private Coordinate GetRandomCoordinate()
         {
             Coordinate coord;
-            bool looper;
-            var Teste=new List<Coordinate>();
-            do
-            {
-                looper = false;
-                
-               
-                var test = _startingBase.Where(t => t.Value != null).ToList();
+         
+            var Teste = new List<Coordinate>();
 
-                Teste.AddRange(test.Select(tag => tag.Coordinate));
-                _gameBoard.LoadCoordinatesSeed();
-                var coordinates = _gameBoard.CoordinatesSeed;
-                var testetet = coordinates.Except(Teste);
-                var index = _random.Next(1,testetet.Count() );
-                coord = testetet.ElementAt(index);
 
-            } while (looper);
+
+
+            var test = _startingBase.Where(t => t.Value != null).ToList();
+
+            Teste.AddRange(test.Select(tag => tag.Coordinate));
+            _gameBoard.LoadCoordinatesSeed();
+            var coordinates = _gameBoard.CoordinatesSeed;
+            var testetet = coordinates.Except(Teste);
+            var index = _random.Next(1, testetet.Count());
+            coord = testetet.ElementAt(index);
+
+
 
             return coord;
         }
