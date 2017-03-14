@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="GameHandlers\GameSolver.cs" />
     <Compile Include="GameHandlers\GameTagDistributor.cs" />
-    <Compile Include="GameHandlers\IGameBoardRules.cs" />
+    <Compile Include="Interfaces\IGameBoardRules.cs" />
     <Compile Include="GameHandlers\NormalSodukoRules.cs" />
     <Compile Include="Interfaces\IGameBoardHolder.cs" />
     <Compile Include="Utilitys\Coordinate.cs" />

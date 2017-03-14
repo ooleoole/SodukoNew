@@ -12,7 +12,7 @@ namespace Soduko.GameHandlers
         private readonly IDictionary<IGameBoard, IGameBoard> _gameBoardGameKeysPair;
         private readonly int _difficultyLevel;
         private readonly GameTagDistributor _gameTagDistributor;
-        private IGameBoardRules _boardRules;
+        private readonly IGameBoardRules _boardRules;
         
 
         public IGameBoardRules BoardRules => _boardRules;

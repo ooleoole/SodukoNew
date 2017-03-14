@@ -10,7 +10,7 @@ namespace Soduko.GameHandlers
         private readonly IGameBoard _gameBoard;
         private readonly IDictionary<IGameBoard, ICollection<IGameBoard>> _targetSolutionGameBoard;
         private readonly GameTagDistributor _gameTagDistributor;
-        private IGameBoardRules _boardRules;
+        private readonly IGameBoardRules _boardRules;
 
         public IGameBoard GameBoard => _gameBoard;
         public IDictionary<IGameBoard, ICollection<IGameBoard>> TargetSolutionGameBoards => _targetSolutionGameBoard;

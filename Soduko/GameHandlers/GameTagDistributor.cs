@@ -66,7 +66,7 @@ namespace Soduko.GameHandlers
 
         public void RemoveRandomGameTagValue()
         {
-            int randomIndex = _random.Next(0, _gameBoard.CoordinatesSeed.Count);
+            int randomIndex = _random.Next( _gameBoard.CoordinatesSeed.Count);
             var coordinate = _gameBoard.CoordinatesSeed.ElementAt(randomIndex);
             RemoveCoordinatesFromSeed(coordinate);
             _gameBoard.Replace(new GameBoardTag(coordinate));
@@ -79,7 +79,7 @@ namespace Soduko.GameHandlers
             if (!_gameBoard.CoordinatesSeed.Any())
             {
                 BackTrack();
-                Console.Write("./\\");
+                //Console.Write("./\\");
             }
         }
 
@@ -100,7 +100,7 @@ namespace Soduko.GameHandlers
 
         private int GetRandomValueFromSeed(int[] valueSeed)
         {
-            var randomIndex = _random.Next(0, valueSeed.Length);
+            var randomIndex = _random.Next(valueSeed.Length);
             var value = valueSeed[randomIndex];
             return value;
         }
@@ -114,7 +114,7 @@ namespace Soduko.GameHandlers
         private Coordinate GetRandomCoordinatesFromSeed()
         {
 
-            var index = _random.Next(0, _gameBoard.CoordinatesSeed.Count - 1);
+            var index = _random.Next(_gameBoard.CoordinatesSeed.Count);
             var coordinate = _gameBoard.CoordinatesSeed.ElementAt(index);
             return coordinate;
         }
@@ -138,7 +138,7 @@ namespace Soduko.GameHandlers
         {
             _gameBoard.LoadCoordinatesSeed();
             var coordinates = GetBaseCoordinates();
-            var index = _random.Next(0, coordinates.Count - 1);
+            var index = _random.Next(coordinates.Count);
             var coord = coordinates.ElementAt(index);
 
 
@@ -151,13 +151,34 @@ namespace Soduko.GameHandlers
             var startingBaseWhitoutNulls = GetStartingBaseWhitoutNulls();
             var baseCoordinates = new List<Coordinate>();
             baseCoordinates.AddRange(startingBaseWhitoutNulls.Select(tag => tag.Coordinate));
-            var coordinates = _gameBoard.CoordinatesSeed.Except(baseCoordinates).ToList();
+            var coordinates =_gameBoard.CoordinatesSeed.Except(baseCoordinates).ToList();
+            //for (int i = 0; i < startingBaseWhitoutNulls.Count; i++)
+            //{
+            //    var tag = startingBaseWhitoutNulls[i];
+            //    for (int j = 0; j < _gameBoard.CoordinatesSeed.Count; j++)
+            //    {
+            //        var coord = _gameBoard.CoordinatesSeed[j];
+            //        if (coord != tag.Coordinate)
+            //        {
+            //            coordinates.Add(coord);
+            //        }
+            //    }
+            //}
             return coordinates;
         }
 
         private List<GameBoardTag> GetStartingBaseWhitoutNulls()
         {
-            return _startingBase.Where(t => t.Value != null).ToList();
+            var startingBaseWhitoutNulls =  _startingBase.Where(t => t.Value != null).ToList();
+            //for (int i = 0; i < _startingBase.Count; i++)
+            //{
+            //    var tag = _startingBase.ElementAt(i);
+            //    if (tag.Value != null)
+            //    {
+            //        startingBaseWhitoutNulls.Add(tag);
+            //    }
+            //}
+            return startingBaseWhitoutNulls;
         }
     }
 }
