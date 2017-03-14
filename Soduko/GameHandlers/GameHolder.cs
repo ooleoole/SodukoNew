@@ -6,20 +6,24 @@ namespace Soduko.GameHandlers
 {
     public class GameHolder : IGameHolder, IGameBoardHolder
     {
-        private const int RemoveBase = 63;
+        private const int RemoveBase = 50;
 
         private readonly IGameBoard _gameBoard;
         private readonly IDictionary<IGameBoard, IGameBoard> _gameBoardGameKeysPair;
         private readonly int _difficultyLevel;
         private readonly GameTagDistributor _gameTagDistributor;
+        private IGameBoardRules _boardRules;
+        
 
+        public IGameBoardRules BoardRules => _boardRules;
         public IGameBoard GameBoard => _gameBoard;
         public IDictionary<IGameBoard, IGameBoard> GameBoardGameKeysPair => _gameBoardGameKeysPair;
 
-        public GameHolder(IGameBoard gameBoard, int difficultylevel)
+        public GameHolder(IGameBoard gameBoard, int difficultylevel, IGameBoardRules boardRules)
         {
             _gameBoard = gameBoard;
             _difficultyLevel = difficultylevel;
+            _boardRules = boardRules;
             _gameBoardGameKeysPair = new Dictionary<IGameBoard, IGameBoard>();
             _gameTagDistributor = new GameTagDistributor(this);
         }
