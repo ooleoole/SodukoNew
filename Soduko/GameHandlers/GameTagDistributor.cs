@@ -13,11 +13,14 @@ namespace Soduko.GameHandlers
         private readonly IGameBoard _gameBoard;
 
         private readonly IGameBoard _startingBase;
+        private readonly IGameBoardRules _boardRules;
+
         public GameTagDistributor(IGameBoardHolder boardHolder)
         {
             _startingBase = boardHolder.GameBoard.Clone();
             _gameBoard = boardHolder.GameBoard;
             _random = new Random(Guid.NewGuid().GetHashCode());
+            _boardRules = boardHolder.BoardRules;
         }
 
         public void PlaceGameTags()
@@ -38,7 +41,7 @@ namespace Soduko.GameHandlers
                         var value = GetRandomValueFromSeed(valueSeed);
                         valueSeed = RemoveValueFromSeed(valueSeed, value);
                         var tag = new GameBoardTag(coordinate, value);
-                        if (ValidateGameBoardTag(tag))
+                        if (_boardRules.ValidateGameBoardTag(tag, _gameBoard, _startingBase))
                         {
                             _gameBoard.AddOrReplace(tag);
                             break;
@@ -47,7 +50,7 @@ namespace Soduko.GameHandlers
                     } while (valueSeed.Length != 0);
                 }
                 BackTrackIfCoordinatesSeedIsEmpty();
-            } while (_gameBoard.Count(t => t.Value != null) < 81 && DateTime.UtcNow - startTime < TimeSpan.FromSeconds(25));
+            } while (_gameBoard.Count(t => t.Value != null) < 81 && DateTime.UtcNow - startTime < TimeSpan.FromSeconds(30));
 
         }
 
@@ -71,23 +74,8 @@ namespace Soduko.GameHandlers
 
         }
 
-        private bool ValidateGameBoardTag(GameBoardTag tag)
-        {
-            if (_startingBase.Any(t => t.Coordinate == tag.Coordinate && t.Value != null))
-            {
-                return false;
-            }
-            return !_gameBoard.Any(t => (t.Coordinate.X == tag.Coordinate.X && t.Value == tag.Value) ||
-                                        (t.Coordinate.Y == tag.Coordinate.Y && t.Value == tag.Value) ||
-                                        t.GameBoardRegion == tag.GameBoardRegion
-                                        && t.Value == tag.Value);
-
-
-        }
-
         private void BackTrackIfCoordinatesSeedIsEmpty()
         {
-            
             if (!_gameBoard.CoordinatesSeed.Any())
             {
                 BackTrack();

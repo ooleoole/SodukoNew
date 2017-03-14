@@ -10,17 +10,20 @@ namespace Soduko.GameHandlers
         private readonly IGameBoard _gameBoard;
         private readonly IDictionary<IGameBoard, ICollection<IGameBoard>> _targetSolutionGameBoard;
         private readonly GameTagDistributor _gameTagDistributor;
+        private IGameBoardRules _boardRules;
 
         public IGameBoard GameBoard => _gameBoard;
         public IDictionary<IGameBoard, ICollection<IGameBoard>> TargetSolutionGameBoards => _targetSolutionGameBoard;
+        public IGameBoardRules BoardRules => _boardRules;
 
-
-        public GameSolver(IGameBoard gameBoard)
+        public GameSolver(IGameBoard gameBoard, IGameBoardRules boardRules)
         {
             _gameBoard = gameBoard;
             _targetSolutionGameBoard = new Dictionary<IGameBoard, ICollection<IGameBoard>>();
+            _boardRules = boardRules;
             _gameTagDistributor = new GameTagDistributor(this);
             
+
         }
 
         public void SolveBoard()

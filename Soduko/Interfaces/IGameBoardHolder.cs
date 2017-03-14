@@ -7,6 +7,7 @@ namespace Soduko.GameHandlers
     public interface IGameBoardHolder
     {
         IGameBoard GameBoard { get;}
+        IGameBoardRules BoardRules { get; }
         
     }
 }

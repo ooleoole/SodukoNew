@@ -13,14 +13,14 @@ namespace Soduko
 
 
             var gameBoard2 = new GameBoards.GameBoard(9);
-
-            var gameCreator = new GameHolder(gameBoard2, 3);
+            var boardRules = new NormalSodukoRules();
+            var gameCreator = new GameHolder(gameBoard2, 3, boardRules);
 
             gameCreator.LoadGame();
             gameCreator.LoadGame();
 
-     
-         
+
+
 
             var gameKey = gameCreator.GameBoardGameKeysPair.Keys.ElementAt(0);
             var game = gameCreator.GameBoardGameKeysPair.Values.ElementAt(0);
@@ -34,8 +34,8 @@ namespace Soduko
             Console.WriteLine();
             Console.WriteLine(game2);
             Console.WriteLine(gameKey2);
-            
-            var gameSolver = new GameSolver(game2);
+
+            var gameSolver = new GameSolver(game2, boardRules);
             gameSolver.SolveBoard();
 
             var target = gameSolver.TargetSolutionGameBoards.Keys.ElementAt(0);
