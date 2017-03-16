@@ -44,11 +44,12 @@ namespace Soduko.GameHandlers
 
         public void LoadGame()
         {
+            _gameBoard.Clear();
             _gameBoard.LoadFreeCoordinatesSeed();
             _gameTagDistributor.PlaceGameTags();
 
             AddKeyGamePairToDic();
-            _gameBoard.Clear();
+            
         }
 
         private void AddKeyGamePairToDic()

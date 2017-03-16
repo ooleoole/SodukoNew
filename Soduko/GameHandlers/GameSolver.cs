@@ -22,13 +22,10 @@ namespace Soduko.GameHandlers
             _targetSolutionGameBoard = new Dictionary<IGameBoard, ICollection<IGameBoard>>();
             _boardRules = boardRules;
             _gameTagDistributor = new GameTagDistributor(this);
-            
-
         }
 
         public void SolveBoard()
         {
-
             SaveTarget();
             _gameBoard.LoadFreeCoordinatesSeed();
             _gameTagDistributor.PlaceGameTags();
@@ -38,9 +35,11 @@ namespace Soduko.GameHandlers
         private void SaveSolution()
         {
             var gameBoardSolution = _gameBoard.Clone();
+            
             var values=_targetSolutionGameBoard.Values;
             var value = values.FirstOrDefault();
             value?.Add(gameBoardSolution);
+            
         }
 
         private void SaveTarget()
