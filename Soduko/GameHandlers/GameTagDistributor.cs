@@ -26,10 +26,10 @@ namespace Soduko.GameHandlers
         public void PlaceGameTags()
         {
             var startTime = DateTime.UtcNow;
-            RemoveStartingBaseFromCoordinatesSeed();
+            var counter = 0;
             do
             {
-                RemoveStartingBaseFromCoordinatesSeed();
+                //RemoveStartingBaseFromCoordinatesSeed();
                 var coordinate = GetRandomCoordinatesFromSeed();
                 RemoveCoordinatesFromSeed(coordinate);
 
@@ -43,6 +43,7 @@ namespace Soduko.GameHandlers
                         var tag = new GameBoardTag(coordinate, value);
                         if (_boardRules.ValidateGameBoardTag(tag, _gameBoard, _startingBase))
                         {
+                            counter++;
                             _gameBoard.AddOrReplace(tag);
                             break;
                         }
@@ -50,8 +51,12 @@ namespace Soduko.GameHandlers
                     } while (valueSeed.Length != 0);
                 }
                 BackTrackIfCoordinatesSeedIsEmpty();
-            } while (_gameBoard.Count(t => t.Value != null) < 81 && DateTime.UtcNow - startTime < TimeSpan.FromSeconds(30));
-
+                if (counter==35000)
+                {
+                    Console.WriteLine("Not SOlved!!!!!");
+                }
+            } while (_gameBoard.Count(t => t.Value != null) < 81 && counter < 35000);
+            Console.WriteLine(counter);
         }
 
         private int[] GetValueSeed()
@@ -66,12 +71,10 @@ namespace Soduko.GameHandlers
 
         public void RemoveRandomGameTagValue()
         {
-            int randomIndex = _random.Next( _gameBoard.CoordinatesSeed.Count);
+            int randomIndex = _random.Next(_gameBoard.CoordinatesSeed.Count);
             var coordinate = _gameBoard.CoordinatesSeed.ElementAt(randomIndex);
             RemoveCoordinatesFromSeed(coordinate);
             _gameBoard.Replace(new GameBoardTag(coordinate));
-
-
         }
 
         private void BackTrackIfCoordinatesSeedIsEmpty()
@@ -108,12 +111,10 @@ namespace Soduko.GameHandlers
         private void RemoveCoordinatesFromSeed(Coordinate coordinate)
         {
             _gameBoard.CoordinatesSeed.Remove(coordinate);
-
         }
 
         private Coordinate GetRandomCoordinatesFromSeed()
         {
-
             var index = _random.Next(_gameBoard.CoordinatesSeed.Count);
             var coordinate = _gameBoard.CoordinatesSeed.ElementAt(index);
             return coordinate;
@@ -123,15 +124,12 @@ namespace Soduko.GameHandlers
         {
             _gameBoard.LoadFreeCoordinatesSeed();
             RemoveRandomCoordinateFromGameBoard();
-
         }
 
         private void RemoveRandomCoordinateFromGameBoard()
         {
             var coordinates = GetRandomCoordinate();
             _gameBoard.RemoveAt(coordinates);
-
-
         }
 
         private Coordinate GetRandomCoordinate()
@@ -139,11 +137,8 @@ namespace Soduko.GameHandlers
             _gameBoard.LoadCoordinatesSeed();
             var coordinates = GetBaseCoordinates();
             var index = _random.Next(coordinates.Count);
-            var coord = coordinates.ElementAt(index);
-
-
-
-            return coord;
+            var coordinate = coordinates.ElementAt(index);
+            return coordinate;
         }
 
         private List<Coordinate> GetBaseCoordinates()
@@ -151,7 +146,7 @@ namespace Soduko.GameHandlers
             var startingBaseWhitoutNulls = GetStartingBaseWhitoutNulls();
             var baseCoordinates = new List<Coordinate>();
             baseCoordinates.AddRange(startingBaseWhitoutNulls.Select(tag => tag.Coordinate));
-            var coordinates =_gameBoard.CoordinatesSeed.Except(baseCoordinates).ToList();
+            var coordinates = _gameBoard.CoordinatesSeed.Except(baseCoordinates).ToList();
             //for (int i = 0; i < startingBaseWhitoutNulls.Count; i++)
             //{
             //    var tag = startingBaseWhitoutNulls[i];
@@ -169,7 +164,7 @@ namespace Soduko.GameHandlers
 
         private List<GameBoardTag> GetStartingBaseWhitoutNulls()
         {
-            var startingBaseWhitoutNulls =  _startingBase.Where(t => t.Value != null).ToList();
+            var startingBaseWhitoutNulls = _startingBase.Where(t => t.Value != null).ToList();
             //for (int i = 0; i < _startingBase.Count; i++)
             //{
             //    var tag = _startingBase.ElementAt(i);
